@@ -1,5 +1,5 @@
 name: "EU AI Act risk-class check"
-description: "Maps your repo's AI system description to EU AI Act articles with the open-source @lucairn/ai-act-classifier keyword engine. Not legal advice."
+description: "Maps your AI system description to EU AI Act articles in CI. Free web version: lucairn.eu. Not legal advice."
 author: "Lucairn"
 branding:
   icon: "book-open"
