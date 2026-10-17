@@ -57,7 +57,7 @@ description: |
 
 When more than one class fires, this tool reports Article 5 first, then Annex III, then Article 50, then Articles 53 / 55. `triggered` lists everything that fired.
 
-The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, a note under a finding when the text appears to deny it ("Found, but the text appears to deny it — please check"; the class does not change), the obligations the engine lists for a possible high-risk result (Articles 10, 12–15, Article 11 / Annex IV), the caveats below, a "Share this result" link to the browser tool, and the engine version.
+The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, a note under a finding when the text appears to deny it ("Found, but the text appears to deny it — please check"; the class does not change), the obligations the engine lists for a possible high-risk result (Articles 10, 12–15, Article 11 / Annex IV), the caveats below, a "Run the check in your browser" link to the browser tool, and the engine version.
 
 ```yaml
       - id: aiact

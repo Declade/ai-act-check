@@ -20,7 +20,7 @@ for (const [name, cls] of Object.entries(expected)) {
     assert.equal(r.network, "", "no network access");
     assert.match(r.summary, /not legal advice/);
     assert.match(r.summary, /98\.8% on 71 test cases measures consistency with the curated lexicon, not real-world accuracy/);
-    assert.match(r.summary, /\[Share this result\]\(https:\/\/lucairn\.eu\/en\/tools\/ai-act-classifier\)/);
+    assert.match(r.summary, /\[Run the check in your browser\]\(https:\/\/lucairn\.eu\/en\/tools\/ai-act-classifier\)/);
     assert.match(r.summary, /@lucairn\/ai-act-classifier v\d+\.\d+\.\d+/);
     const badge = JSON.parse(r.badge);
     assert.equal(badge.schemaVersion, 1);
@@ -64,7 +64,7 @@ test("badge message is the risk class only", () => {
     assert.equal(r.outputs["risk-class"], cls);
     const badge = JSON.parse(r.badge);
     assert.deepEqual(Object.keys(badge).sort(), ["color", "label", "message", "schemaVersion"]);
-    assert.equal(badge.message, { prohibited: "possible prohibited practice", gpai: "GPAI" }[cls]);
+    assert.equal(badge.message, { prohibited: "possible prohibited practice", gpai: "possible GPAI obligations" }[cls]);
   }
 });
 
@@ -140,7 +140,7 @@ test("bundle contains no network code", () => {
 });
 
 test("no class title or badge states a class or obligation without 'possible' / 'möglich'", () => {
-  const strong = /high-risk|prohibited|hochrisiko|verboten|transparen|obligation|pflicht/i;
+  const strong = /high-risk|prohibited|hochrisiko|verboten|transparen|obligation|pflicht|gpai/i;
   const hedge = /possible|möglich/i;
   for (const lang of ["en", "de"]) {
     for (const [cls, t] of Object.entries(CLASS_TEXT[lang])) {
@@ -159,6 +159,8 @@ test("no class title or badge states a class or obligation without 'possible' / 
   );
   assert.equal(CLASS_TEXT.en.transparency.badge, "possible transparency obligation");
   assert.equal(CLASS_TEXT.de.transparency.badge, "mögliche Transparenzpflicht");
+  assert.equal(CLASS_TEXT.en.gpai.badge, "possible GPAI obligations");
+  assert.equal(CLASS_TEXT.de.gpai.badge, "mögliche GPAI-Pflichten");
   // And in real output: card headings and the class line carry the hedge (EN + DE,
   // high-risk, transparency and GPAI cards).
   const gpaiText = "We are the provider of a general-purpose AI model, a foundation model trained with large compute, offered to downstream developers.";
@@ -186,5 +188,19 @@ test("no output claims conformity or minimal risk (EN + DE)", () => {
       const m = text.match(banned);
       assert.equal(m, null, `banned word "${m && m[0]}" in ${what}`);
     }
+  }
+});
+
+test("Annex III point 2 never prints a sub-letter (EN + DE)", () => {
+  const texts = {
+    en: "The AI system controls safety components in the management of the electricity grid.",
+    de: "Das KI-System dient als Sicherheitskomponente bei der Steuerung der Stromversorgung und des Stromnetzes.",
+  };
+  for (const [lang, re, bad] of [["en", /Annex III point 2(?![\d(])/, /Annex III point 2\(/], ["de", /Anhang III Nr\. 2(?![\d])/, /Anhang III Nr\. 2 Buchst/]]) {
+    const r = run({ files: { "ai-system.md": texts[lang] }, inputs: { lang } });
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+    assert.match(r.summary, re);
+    assert.doesNotMatch(r.summary, bad);
+    assert.deepEqual(JSON.parse(r.outputs.triggered).annex_iii, ["Annex III point 2"]);
   }
 });

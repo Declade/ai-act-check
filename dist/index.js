@@ -9971,14 +9971,14 @@ var CLASS_TEXT = {
     prohibited: { badge: "possible prohibited practice", title: "Article 5 trigger matched (possible prohibited practice)" },
     "high-risk": { badge: "possible high-risk", title: "Annex III area matched (possible high-risk, Article 6)" },
     transparency: { badge: "possible transparency obligation", title: "Possible transparency obligation (Article 50)" },
-    gpai: { badge: "GPAI", title: "Possible general-purpose AI model provider obligations (Article 53; Article 55 if systemic risk)" },
+    gpai: { badge: "possible GPAI obligations", title: "Possible general-purpose AI model provider obligations (Article 53; Article 55 if systemic risk)" },
     "no-trigger": { badge: "no trigger found", title: "No trigger found" }
   },
   de: {
     prohibited: { badge: "m\xF6gliche verbotene Praktik", title: "Artikel-5-Ausl\xF6ser erkannt (m\xF6gliche verbotene Praktik)" },
     "high-risk": { badge: "m\xF6glicherweise Hochrisiko", title: "Anhang-III-Bereich erkannt (m\xF6glicherweise Hochrisiko, Artikel 6)" },
     transparency: { badge: "m\xF6gliche Transparenzpflicht", title: "M\xF6gliche Transparenzpflicht (Artikel 50)" },
-    gpai: { badge: "GPAI", title: "M\xF6gliche Anbieterpflichten f\xFCr KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53; Artikel 55 bei systemischem Risiko)" },
+    gpai: { badge: "m\xF6gliche GPAI-Pflichten", title: "M\xF6gliche Anbieterpflichten f\xFCr KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53; Artikel 55 bei systemischem Risiko)" },
     "no-trigger": { badge: "kein Ausl\xF6ser gefunden", title: "Kein Ausl\xF6ser gefunden" }
   }
 };
@@ -10064,7 +10064,7 @@ var UI = {
     negNote: "Found, but the text appears to deny it \u2014 please check",
     negCue: "negation",
     links: "EUR-Lex links open the full Regulation (EU) 2024/1689; the article is named next to each link.",
-    share: "Share this result",
+    share: "Run the check in your browser",
     shareText: "run the same check in the browser on lucairn.eu",
     engine: "Engine",
     rules: "rules"
@@ -10089,7 +10089,7 @@ var UI = {
     negNote: "Gefunden, aber der Text scheint es zu verneinen \u2014 bitte pr\xFCfen",
     negCue: "Verneinung",
     links: "EUR-Lex-Links \xF6ffnen die gesamte Verordnung (EU) 2024/1689; der Artikel steht jeweils daneben.",
-    share: "Ergebnis teilen",
+    share: "Check im Browser ausf\xFChren",
     shareText: "dieselbe Pr\xFCfung im Browser auf lucairn.eu ausf\xFChren",
     engine: "Engine",
     rules: "Regeln"
@@ -10110,8 +10110,9 @@ function eurLex(citations, key, lang) {
   return url || (lang === "de" ? citations._meta.primary_pdf_de : citations._meta.primary_pdf_en);
 }
 function annexRef(d, lang) {
-  const sub = d.sub_letters.length ? `(${d.sub_letters.join(", ")})` : "";
-  return lang === "de" ? `Anhang III Nr. ${d.annex_iii_number}${d.sub_letters.length ? ` Buchst. ${d.sub_letters.join(", ")}` : ""}` : `Annex III point ${d.annex_iii_number}${sub}`;
+  const letters = d.annex_iii_number === 2 ? [] : d.sub_letters;
+  const sub = letters.length ? `(${letters.join(", ")})` : "";
+  return lang === "de" ? `Anhang III Nr. ${d.annex_iii_number}${letters.length ? ` Buchst. ${letters.join(", ")}` : ""}` : `Annex III point ${d.annex_iii_number}${sub}`;
 }
 function findings(r, citations, lang) {
   const rows = [];
