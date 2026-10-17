@@ -1,0 +1,97 @@
+{
+  "language": "de",
+  "version": "v0.1.0",
+  "labels": {
+    "section_title": "EU-KI-VO-Zuordnung",
+    "section_overlay": "Lucairn-Pflichten-Overlay",
+    "overlay_suppressed_note": "Lucairn-Pflichten-Overlay unterdrückt via --no-three-category.",
+    "article_5": "Artikel 5  (verboten)",
+    "article_6_annex_iii": "Artikel 6  + Anhang III",
+    "article_10": "Artikel 10 (Daten-Governance)",
+    "article_12": "Artikel 12 (Protokollierung/Aufzeichnungen)",
+    "article_13": "Artikel 13 (Betreiber-Transparenz)",
+    "article_14": "Artikel 14 (menschliche Aufsicht)",
+    "article_15": "Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit)",
+    "article_50": "Artikel 50 (Transparenz)",
+    "article_4": "Artikel 4  (KI-Kompetenz)",
+    "gpai_articles_53_55": "Artikel 53+55 (GPAI)",
+    "annex_iv": "Anhang IV  (technische Dokumentation)",
+    "cat_1": "Kat 1 Sanitizer  (Art. 10+15)",
+    "cat_2": "Kat 2 Evidence   (Art. 12+14)",
+    "cat_3": "Kat 3 Inventory  (Art. 10+12+14+15)",
+    "status_prohibited": "VERBOTEN",
+    "status_high_risk": "HOCHRISIKO",
+    "status_applies": "anwendbar",
+    "status_required": "ERFORDERLICH",
+    "status_not_triggered": "nicht ausgelöst",
+    "status_not_applicable": "nicht anwendbar",
+    "status_suppressed_by_art_5": "durch Art. 5 unterdrückt",
+    "label_confidence": "Konfidenz",
+    "label_mode": "Modus",
+    "label_rules": "Regeln",
+    "label_cite": "Zitate",
+    "label_commentary": "(Kommentar)",
+    "label_primary_eur_lex": "Primärquelle (EUR-Lex):",
+    "label_commentary_block": "Kommentar (Lucairn):",
+    "disclaimer_footer": "⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer.",
+    "warning_both_stdin_and_text": "Sowohl stdin als auch Positionstext angegeben; verwende Positionstext.",
+    "error_empty_input": "Fehler: keine Eingabe vorhanden (Anwendungsfall als Argument oder via stdin übergeben).",
+    "error_invalid_lang": "Fehler: --lang muss 'en' oder 'de' sein. Erhalten: ",
+    "error_rules_version_mismatch": "Fehler: rules-version-Konflikt — angefordert \"{requested}\", aktuell \"{current}\". Verfügbar: \"{current}\".",
+    "error_annex_invalid": "Fehler: --annex unterstützt nur 'iv' (Anhang IV technische Dokumentation). Erhalten: ",
+    "error_wizard_cancelled": "Wizard abgebrochen (keine Eingabe empfangen).",
+    "annex_iv_reference_title": "Anhang IV — Technische Dokumentation (Verordnung (EU) 2024/1689)",
+    "annex_iv_reference_source": "Quelle: EUR-Lex Verordnung (EU) 2024/1689, Anhang IV",
+    "annex_iii_prefix": "Anhang III",
+    "annex_iv_prefix": "Anhang IV"
+  },
+  "annex_iii_chapeaux": {
+    "1": "Biometrie, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "2": "Kritische Infrastruktur: KI-Systeme, die bestimmungsgemäß als Sicherheitsbauteile im Rahmen der Verwaltung und des Betriebs kritischer digitaler Infrastruktur, des Straßenverkehrs oder der Wasser-, Gas-, Wärme- oder Stromversorgung verwendet werden sollen",
+    "3": "Allgemeine und berufliche Bildung",
+    "4": "Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit",
+    "5": "Zugänglichkeit und Inanspruchnahme grundlegender privater und grundlegender öffentlicher Dienste und Leistungen:",
+    "6": "Strafverfolgung, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "7": "Migration, Asyl und Grenzkontrolle, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "8": "Rechtspflege und demokratische Prozesse"
+  },
+  "annex_iv_chapeau": "Die in Artikel 11 Absatz 1 genannte technische Dokumentation muss mindestens die folgenden Informationen enthalten, soweit sie für das betreffende KI-System von Belang sind:",
+  "annex_iv_reference": [
+    {
+      "number": "1.",
+      "title": "Allgemeine Beschreibung des KI-Systems."
+    },
+    {
+      "number": "2.",
+      "title": "Detaillierte Beschreibung der Bestandteile des KI-Systems und seines Entwicklungsprozesses."
+    },
+    {
+      "number": "3.",
+      "title": "Detaillierte Informationen über die Überwachung, Funktionsweise und Kontrolle des KI-Systems."
+    },
+    {
+      "number": "4.",
+      "title": "Darlegungen zur Eignung der Leistungskennzahlen für das spezifische KI-System."
+    },
+    {
+      "number": "5.",
+      "title": "Detaillierte Beschreibung des Risikomanagementsystems gemäß Artikel 9."
+    },
+    {
+      "number": "6.",
+      "title": "Beschreibung einschlägiger Änderungen, die der Anbieter während des Lebenszyklus an dem System vorgenommen hat."
+    },
+    {
+      "number": "7.",
+      "title": "Aufstellung der vollständig oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden."
+    },
+    {
+      "number": "8.",
+      "title": "Kopie der EU-Konformitätserklärung gemäß Artikel 47."
+    },
+    {
+      "number": "9.",
+      "title": "Detaillierte Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72."
+    }
+  ]
+}

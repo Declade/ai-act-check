@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "version": "v0.1.0",
+    "primary_source": "EUR-Lex Regulation (EU) 2024/1689",
+    "primary_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "primary_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "commentary_publisher": "Lucairn UG (haftungsbeschränkt), Nürnberg (HRB 46107 Amtsgericht Nürnberg)",
+    "_provenance_notice": "regulation_text_mirror_* URLs point at the Future of Life Institute regulation-text mirror (artificialintelligenceact.eu) — Tier-3 third-party mirror per the citation tier scheme (Tier-1 = EUR-Lex + EU AI Office Service Desk at ai-act-service-desk.ec.europa.eu; Tier-2 = BSI + BfDI + Bitkom WG; Tier-3 = FLI mirror + ai-act-law.eu/de). All 9 per-article DE URLs verified live 2026-05-15. Lucairn commentary URLs source: lucairn.eu blog corpus (commentary, not regulator-authoritative). EUR-Lex HTML omits per-article anchors because EUR-Lex page-version anchors are inconsistent across page versions."
+  },
+  "article_5": {
+    "label_en": "Article 5 — Prohibited AI practices",
+    "label_de": "Artikel 5 — Verbotene Praktiken im KI-Bereich",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/5/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/5/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "annex_iii": {
+    "label_en": "Article 6 + Annex III — High-risk AI systems",
+    "label_de": "Artikel 6 + Anhang III — Hochrisiko-KI-Systeme",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/6/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/6/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_10": {
+    "label_en": "Article 10 — Data and data governance",
+    "label_de": "Artikel 10 — Daten und Daten-Governance",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/10/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/10/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_12": {
+    "label_en": "Article 12 — Record-keeping",
+    "label_de": "Artikel 12 — Aufzeichnungspflichten",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/12/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/12/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_13": {
+    "label_en": "Article 13 — Transparency and provision of information to deployers",
+    "label_de": "Artikel 13 — Transparenz und Bereitstellung von Informationen für die Betreiber",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/13/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/13/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_14": {
+    "label_en": "Article 14 — Human oversight",
+    "label_de": "Artikel 14 — Menschliche Aufsicht",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/14/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/14/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_15": {
+    "label_en": "Article 15 — Accuracy, robustness and cybersecurity",
+    "label_de": "Artikel 15 — Genauigkeit, Robustheit und Cybersicherheit",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/15/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/15/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_50": {
+    "label_en": "Article 50 — Transparency obligations for providers and deployers of certain AI systems",
+    "label_de": "Artikel 50 — Transparenzpflichten für Anbieter und Betreiber bestimmter KI-Systeme",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/50/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/50/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "article_4": {
+    "label_en": "Article 4 — AI literacy",
+    "label_de": "Artikel 4 — KI-Kompetenz",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/4/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/4/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "gpai_articles_53_55": {
+    "label_en": "Articles 53 + 55 — General-purpose AI obligations + systemic risk",
+    "label_de": "Artikel 53 + 55 — Pflichten für KI mit allgemeinem Verwendungszweck + systemische Risiken",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/53/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/53/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  },
+  "annex_iv": {
+    "label_en": "Annex IV — Technical documentation",
+    "label_de": "Anhang IV — Technische Dokumentation",
+    "eur_lex_html_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
+    "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/annex/4/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/annex/4/",
+    "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
+    "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
+  }
+}

@@ -1,0 +1,613 @@
+{
+  "language": "en",
+  "version": "v0.4.0",
+  "_meta": {
+    "notice": "Seed lexicon for v0.1.x. Every entry's `source` MUST be verified verbatim against EUR-Lex before rule modules consume the trigger. Entries with no direct EUR-Lex source are excluded.",
+    "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  "_negation": {
+    "notice": "Negation word lists for the deterministic keyword extractor (after v0.3.1). ADVISORY ONLY: every lexicon hit fires exactly as in v0.3.1; a negation never changes a verdict. A fired phrase that stands near a negation (a cue directly before it with at most max_gap allowlisted words in between, or a trailing denial) is additionally listed in `negated_hits` with the note \"Found, but the text appears to deny it — please check\". The rules live in src/extract/negation.ts. The leading underscore keeps this block out of category-group discovery and out of the LLM prompt.",
+    "clause_words": ["and", "but", "however", "although", "though", "whereas", "while", "instead"],
+    "cues": ["not", "no", "never", "cannot", "neither", "nor"],
+    "nominal_cues": ["no", "neither", "nor"],
+    "list_cues": ["nor"],
+    "contraction_stems": ["doesn", "don", "didn", "isn", "aren", "wasn", "weren", "won", "wouldn", "can", "couldn", "shouldn", "hasn", "haven", "hadn", "mustn", "mightn", "needn", "shan", "ain"],
+    "paired_cues": {},
+    "void_after": ["only", "just", "merely", "exclusively", "solely", "simply", "necessarily", "always", "mainly", "primarily", "limited", "limit", "limits", "restriction", "restrictions", "way", "consent", "longer", "more", "less", "matter", "doubt"],
+    "determiners": ["a", "an", "the", "any", "such", "this", "these", "those", "its", "our", "their", "your"],
+    "modifiers": ["automated", "automatic", "real-time", "live", "remote", "ai-based", "ai-powered", "ai-driven"],
+    "governed_verbs": ["use", "uses", "used", "using", "perform", "performs", "performed", "performing", "apply", "applies", "applied", "applying", "employ", "employs", "employed", "employing", "offer", "offers", "offered", "offering", "do", "does", "did", "doing", "conduct", "conducts", "conducted", "conducting"],
+    "infinitive_marker": "to",
+    "max_gap": 3,
+    "breakers": ["that", "how", "when", "if", "which", "who", "whom", "whose", "where", "because", "after", "unless", "whether", "once", "until", "opt", "refuse", "refuses", "avoid", "avoids", "contest", "contests", "object", "objects", "escape", "escapes", "prevent", "prevents", "stop", "stops", "block", "blocks", "disable", "disables", "required", "limited"],
+    "subclause_openers": ["which", "who", "whom", "whose", "where", "that", "when", "if", "because", "unless", "whether", "so"],
+    "prepositions": ["in", "on", "at", "by", "for", "with", "from", "of", "under"],
+    "without": "without",
+    "list_joiners": ["and", "or", "nor"],
+    "clause_pronouns": ["we", "it", "they", "he", "she", "you", "i"],
+    "closers": [],
+    "cancel_after": ["but", "only", "rather", "instead", "except", "merely", "just", "solely"],
+    "trailing_aux": ["is", "are", "was", "were", "will", "would", "shall", "should", "can", "could", "may", "might", "must", "has", "have", "had", "does", "do", "did"],
+    "trailing_fillers": [],
+    "trailing_negators": ["not", "never"],
+    "trailing_be": ["be", "been", "being"],
+    "trailing_predicates": ["used", "deployed", "performed", "applied", "employed", "offered", "conducted", "done", "implemented", "provided", "supported", "included", "involved", "enabled", "possible", "planned", "intended"],
+    "trailing_post": [],
+    "bare_verbs": [],
+    "bare_particles": []
+  },
+  "annex_iii": {
+    "1_biometrics": {
+      "description": "Annex III.1 — remote biometric identification, biometric categorisation by sensitive/protected attributes, emotion recognition.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "remote biometric identification" },
+        { "phrase": "facial recognition" },
+        { "phrase": "biometric categorisation" },
+        { "phrase": "biometric categorization" },
+        { "phrase": "emotion recognition" },
+        { "phrase": "fingerprint identification" }
+      ]
+    },
+    "2_critical_infrastructure": {
+      "description": "Annex III.2 — safety components of critical digital, road traffic, water, gas, heating, electricity supply infrastructure.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "critical infrastructure" },
+        { "phrase": "traffic control" },
+        { "phrase": "power grid" },
+        { "phrase": "electricity grid" },
+        { "phrase": "water supply" },
+        { "phrase": "gas supply" },
+        { "phrase": "safety component" }
+      ]
+    },
+    "3_education": {
+      "description": "Annex III.3 — access/admission to educational institutions, evaluation of learning outcomes, assessing level of education, monitoring prohibited behaviour during tests.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "student admission" },
+        { "phrase": "student admissions" },
+        { "phrase": "admission decision" },
+        { "phrase": "admission decisions" },
+        { "phrase": "exam scoring" },
+        { "phrase": "automated grading" },
+        { "phrase": "learning assessment" },
+        { "phrase": "learning assessments" },
+        { "phrase": "proctoring" },
+        { "phrase": "cheating detection" },
+        { "phrase": "education level determination" },
+        { "phrase": "evaluate learning outcomes" },
+        { "phrase": "assessment of appropriate level of education" },
+        { "phrase": "determine access to educational institutions" },
+        { "phrase": "access to educational institutions" },
+        { "phrase": "determine access to education" },
+        { "phrase": "access to education" },
+        { "phrase": "admission to educational institutions" },
+        { "phrase": "university admission" },
+        { "phrase": "university admissions" },
+        { "phrase": "school admission" },
+        { "phrase": "school admissions" },
+        { "phrase": "evaluate student admission" },
+        { "phrase": "student admission decision" },
+        { "phrase": "predict student performance" },
+        { "phrase": "exam proctoring" },
+        { "phrase": "online exam monitoring" },
+        { "phrase": "automated essay scoring" }
+      ]
+    },
+    "4_employment": {
+      "description": "Annex III.4 — recruitment, selection, decisions affecting terms of employment, promotion, termination, task allocation, monitoring/evaluation of performance.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "cv screening" },
+        { "phrase": "cv screenings" },
+        { "phrase": "resume screening" },
+        { "phrase": "resume screenings" },
+        { "phrase": "candidate ranking" },
+        { "phrase": "applicant tracking" },
+        { "phrase": "hiring decision" },
+        { "phrase": "hiring decisions" },
+        { "phrase": "performance evaluation" },
+        { "phrase": "performance evaluations" },
+        { "phrase": "worker monitoring" },
+        { "phrase": "rank job applicants" },
+        { "phrase": "ranks job applicants" },
+        { "phrase": "rank applicants" },
+        { "phrase": "ranks applicants" },
+        { "phrase": "rank candidates" },
+        { "phrase": "ranks candidates" },
+        { "phrase": "rank job candidates" },
+        { "phrase": "ranks job candidates" },
+        { "phrase": "shortlist candidates" },
+        { "phrase": "shortlists candidates" },
+        { "phrase": "shortlist applicants" },
+        { "phrase": "shortlists applicants" },
+        { "phrase": "shortlisting candidates" },
+        { "phrase": "shortlisting applicants" },
+        { "phrase": "candidate shortlist" },
+        { "phrase": "candidate shortlisting" },
+        { "phrase": "applicant shortlist" },
+        { "phrase": "applicant shortlisting" },
+        { "phrase": "recruitment" },
+        { "phrase": "recruiting candidates" },
+        { "phrase": "recruiting applicants" },
+        { "phrase": "recruit candidates" },
+        { "phrase": "recruits candidates" },
+        { "phrase": "applicant selection" },
+        { "phrase": "candidate selection" },
+        { "phrase": "selection of candidates" },
+        { "phrase": "screen cvs" },
+        { "phrase": "screens cvs" },
+        { "phrase": "screen resumes" },
+        { "phrase": "screens resumes" },
+        { "phrase": "screen applicants" },
+        { "phrase": "screens applicants" },
+        { "phrase": "screen candidates" },
+        { "phrase": "screens candidates" },
+        { "phrase": "evaluate applicants" },
+        { "phrase": "evaluates applicants" },
+        { "phrase": "evaluate candidates" },
+        { "phrase": "evaluates candidates" },
+        { "phrase": "evaluate cvs" },
+        { "phrase": "evaluate resumes" },
+        { "phrase": "evaluate job applicants" },
+        { "phrase": "automated hiring" },
+        { "phrase": "automated recruitment" },
+        { "phrase": "job applicants by cv" },
+        { "phrase": "applicants by cv" },
+        { "phrase": "evaluate job applications" },
+        { "phrase": "evaluate job applications and cvs" },
+        { "phrase": "evaluates job applications" },
+        { "phrase": "evaluating job applications" },
+        { "phrase": "select candidates for employment" },
+        { "phrase": "selects candidates for employment" },
+        { "phrase": "selecting candidates for employment" },
+        { "phrase": "candidates for employment" },
+        { "phrase": "job applications and cvs" }
+      ]
+    },
+    "5_essential_services": {
+      "description": "Annex III.5 — public assistance eligibility, creditworthiness/credit scoring, life and health insurance risk assessment/pricing, emergency services dispatch.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "credit scoring" },
+        { "phrase": "creditworthiness" },
+        { "phrase": "insurance pricing" },
+        { "phrase": "insurance risk assessment" },
+        { "phrase": "insurance risk assessments" },
+        { "phrase": "benefit eligibility" },
+        { "phrase": "public assistance benefits eligibility" },
+        { "phrase": "emergency dispatch" },
+        { "phrase": "triage" }
+      ]
+    },
+    "6_law_enforcement": {
+      "description": "Annex III.6 — risk assessment, polygraphs, evidence reliability, profiling of natural persons, deep analytical crime data analysis.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "predictive policing" },
+        { "phrase": "recidivism risk" },
+        { "phrase": "polygraph" },
+        { "phrase": "polygraphs" },
+        { "phrase": "lie detector" },
+        { "phrase": "lie detectors" },
+        { "phrase": "evidence reliability" },
+        { "phrase": "crime profiling" },
+        { "phrase": "victim-risk assessment" },
+        { "phrase": "risk of becoming victim" },
+        { "phrase": "assess the risk of victim" }
+      ]
+    },
+    "7_migration_border": {
+      "description": "Annex III.7 — migration, asylum, border control: risk assessment, polygraphs, examining applications for visa/asylum/residence, detection/identification at borders.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "visa application" },
+        { "phrase": "visa applications" },
+        { "phrase": "asylum application" },
+        { "phrase": "asylum applications" },
+        { "phrase": "border control" },
+        { "phrase": "residence permit" },
+        { "phrase": "residence permits" },
+        { "phrase": "migration risk" },
+        { "phrase": "border surveillance" },
+        { "phrase": "irregular migration risk" },
+        { "phrase": "residence permit application" },
+        { "phrase": "residence permit applications" },
+        { "phrase": "asylum risk assessment" },
+        { "phrase": "polygraph at the border" },
+        { "phrase": "polygraphs at the border" },
+        { "phrase": "polygraph at borders" },
+        { "phrase": "polygraphs at borders" }
+      ]
+    },
+    "8_justice_democracy": {
+      "description": "Annex III.8 — administration of justice (researching/interpreting facts and law, applying law to facts), influencing elections/referendums/voting behaviour.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "judicial decision" },
+        { "phrase": "judicial assistance" },
+        { "phrase": "legal interpretation" },
+        { "phrase": "election influencing" },
+        { "phrase": "voter targeting" },
+        { "phrase": "judicial research" },
+        { "phrase": "fact research" },
+        { "phrase": "election influence" }
+      ]
+    }
+  },
+  "article_5_prohibited": {
+    "a_subliminal_manipulative": {
+      "description": "Art 5(1)(a) — subliminal techniques beyond awareness, or purposefully manipulative or deceptive techniques materially distorting behaviour.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "subliminal technique" },
+        { "phrase": "manipulative technique" },
+        { "phrase": "deceptive technique" }
+      ]
+    },
+    "b_exploit_vulnerabilities": {
+      "description": "Art 5(1)(b) — exploiting vulnerabilities due to age, disability, or specific social/economic situation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "exploit vulnerability" },
+        { "phrase": "exploit children" },
+        { "phrase": "exploit elderly" }
+      ]
+    },
+    "c_social_scoring": {
+      "description": "Art 5(1)(c) — evaluation/classification of natural persons over time based on social behaviour or personality characteristics (social scoring).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "social scoring" },
+        { "phrase": "social credit" },
+        { "phrase": "trustworthiness score" },
+        { "phrase": "social trustworthiness" },
+        { "phrase": "ranks citizens" },
+        { "phrase": "rank citizens" },
+        { "phrase": "score citizens" },
+        { "phrase": "scores citizens" },
+        { "phrase": "rate citizens" },
+        { "phrase": "rates citizens" },
+        { "phrase": "rank people by behavior" },
+        { "phrase": "ranks people by behavior" },
+        { "phrase": "rank people by behaviour" },
+        { "phrase": "ranks people by behaviour" },
+        { "phrase": "score people based on behavior" },
+        { "phrase": "score people based on behaviour" },
+        { "phrase": "citizen behavior scoring" },
+        { "phrase": "citizen behaviour scoring" },
+        { "phrase": "general-purpose social scoring" },
+        { "phrase": "citizens by trustworthiness" }
+      ]
+    },
+    "d_predictive_policing": {
+      "description": "Art 5(1)(d) — risk assessment to predict criminal offences based solely on profiling or personality traits.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "predictive policing profiling" },
+        { "phrase": "criminal risk profiling" },
+        { "phrase": "predictive policing" },
+        { "phrase": "predict criminal offence" },
+        { "phrase": "predict criminal offences" },
+        { "phrase": "will commit a criminal offence" }
+      ]
+    },
+    "e_facial_scraping": {
+      "description": "Art 5(1)(e) — untargeted scraping of facial images from the internet or CCTV to build facial-recognition databases.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "facial scraping" },
+        { "phrase": "scrape facial images" },
+        { "phrase": "untargeted facial scraping" }
+      ]
+    },
+    "f_emotion_in_workplace_education": {
+      "description": "Art 5(1)(f) — inferring emotions in workplace or education (with medical/safety exceptions).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotion inference at work" },
+        { "phrase": "workplace emotion" },
+        { "phrase": "classroom emotion recognition" },
+        { "phrase": "emotion recognition in the workplace" },
+        { "phrase": "emotion recognition in workplace" },
+        { "phrase": "emotion detection in the workplace" },
+        { "phrase": "emotion detection in workplace" },
+        { "phrase": "emotion recognition in education" },
+        { "phrase": "emotion recognition in schools" },
+        { "phrase": "emotion recognition for students" },
+        { "phrase": "emotion detection in schools" },
+        { "phrase": "emotion analysis in workplace" },
+        { "phrase": "emotion analysis in the workplace" },
+        { "phrase": "infer emotions in workplace" },
+        { "phrase": "infer emotions in the workplace" },
+        { "phrase": "infer emotions in education" },
+        { "phrase": "emotion-aware hr system" },
+        { "phrase": "workplace emotion monitoring" },
+        { "phrase": "infers workers emotions" },
+        { "phrase": "infer workers emotions" },
+        { "phrase": "detect workers emotions" },
+        { "phrase": "detects workers emotions" },
+        { "phrase": "analyze workers emotions" },
+        { "phrase": "analyse workers emotions" },
+        { "phrase": "infer emotions in a workplace" },
+        { "phrase": "infers emotions in a workplace" },
+        { "phrase": "infers emotions in workplace" },
+        { "phrase": "infers emotions in the workplace" },
+        { "phrase": "infers emotions in education" },
+        { "phrase": "emotion detection in a workplace" },
+        { "phrase": "emotion recognition in a workplace" },
+        { "phrase": "emotion analysis in a workplace" },
+        { "phrase": "detects employee emotions" },
+        { "phrase": "detect employee emotions" },
+        { "phrase": "surveillance system that detects emotions" },
+        { "phrase": "workplace surveillance that detects emotions" },
+        { "phrase": "emotion detection via webcam" },
+        { "phrase": "webcam emotion detection" },
+        { "phrase": "detects emotions via webcam" },
+        { "phrase": "workplace emotional surveillance" }
+      ]
+    },
+    "g_biometric_categorisation_sensitive": {
+      "description": "Art 5(1)(g) — biometric categorisation to infer race, political opinion, trade-union membership, religious or philosophical beliefs, sex life, sexual orientation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "infer political opinion" },
+        { "phrase": "infer sexual orientation" },
+        { "phrase": "infer race" },
+        { "phrase": "infer religion" },
+        { "phrase": "biometric categorisation to infer race" },
+        { "phrase": "biometric categorization to infer race" },
+        { "phrase": "biometric categorisation to infer political opinion" },
+        { "phrase": "biometric categorization to infer political opinion" },
+        { "phrase": "biometric categorisation to infer sexual orientation" },
+        { "phrase": "biometric categorization to infer sexual orientation" },
+        { "phrase": "biometric categorisation to infer religion" },
+        { "phrase": "biometric categorization to infer religion" },
+        { "phrase": "infers political opinion from facial features" },
+        { "phrase": "infers sexual orientation from facial features" },
+        { "phrase": "infers race from facial features" },
+        { "phrase": "infer trade union membership" },
+        { "phrase": "infer religious belief" },
+        { "phrase": "infer philosophical belief" }
+      ]
+    },
+    "h_realtime_remote_biometric_le": {
+      "description": "Art 5(1)(h) — real-time remote biometric identification in publicly accessible spaces for law-enforcement (narrow exceptions only).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "real-time biometric identification" },
+        { "phrase": "live facial recognition" },
+        { "phrase": "real-time facial recognition" },
+        { "phrase": "real-time remote biometric identification" },
+        { "phrase": "real time remote biometric identification" },
+        { "phrase": "real-time face recognition" },
+        { "phrase": "real-time rbi" },
+        { "phrase": "facial recognition by police" },
+        { "phrase": "facial recognition for law enforcement" },
+        { "phrase": "biometric identification by law enforcement" },
+        { "phrase": "biometric identification by police" },
+        { "phrase": "biometric identification in publicly accessible spaces" }
+      ]
+    }
+  },
+  "article_50_gpai": {
+    "1_interaction_disclosure": {
+      "description": "Art 50(1) — providers of AI systems intended to interact directly with natural persons must disclose AI nature.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "chatbot" },
+        { "phrase": "ai assistant" },
+        { "phrase": "conversational ai" }
+      ]
+    },
+    "2_synthetic_content_marking": {
+      "description": "Art 50(2) — generative AI outputs must be marked in a machine-readable format as artificially generated.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "synthetic content" },
+        { "phrase": "ai-generated content" },
+        { "phrase": "generative ai" }
+      ]
+    },
+    "3_emotion_categorisation_disclosure": {
+      "description": "Art 50(3) — deployers of emotion-recognition or biometric-categorisation systems must inform exposed persons. Lexicon scoped to deployer-disclosure / customer-facing contexts; raw 'biometric categorisation system' (without disclosure / customer context) is intentionally NOT here, because that bare phrasing applies to BOTH Art 5(1)(g) prohibition AND Art 50(3) transparency. Art 50(3) needs disclosure-context cues to avoid over-firing alongside Art 5(1)(g) inputs.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotion recognition deployer" },
+        { "phrase": "biometric categorisation deployer" },
+        { "phrase": "emotion recognition for customers" },
+        { "phrase": "emotion recognition disclosure" },
+        { "phrase": "biometric categorisation disclosure" },
+        { "phrase": "inform persons of emotion recognition" }
+      ]
+    },
+    "4_deepfake_labeling": {
+      "description": "Art 50(4) — deployers generating or manipulating image/audio/video to constitute a deep fake must disclose artificial generation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "deepfake" },
+        { "phrase": "deep fake" },
+        { "phrase": "face swap" },
+        { "phrase": "synthetic video" },
+        { "phrase": "synthetic videos" },
+        { "phrase": "synthetic image" },
+        { "phrase": "synthetic images" },
+        { "phrase": "generates synthetic videos" },
+        { "phrase": "generates synthetic content" },
+        { "phrase": "photorealistic synthetic video" },
+        { "phrase": "photorealistic synthetic videos" },
+        { "phrase": "ai-generated video" },
+        { "phrase": "ai-generated image" },
+        { "phrase": "manipulated video" },
+        { "phrase": "manipulated audio" },
+        { "phrase": "synthetic videos of real people" }
+      ]
+    },
+    "5_public_interest_text": {
+      "description": "Art 50(4) second sub-paragraph — deployers of AI systems generating text published to inform the public on matters of public interest must disclose artificial generation/manipulation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "ai-generated news" },
+        { "phrase": "automated journalism" },
+        { "phrase": "news generation" },
+        { "phrase": "newsroom ai" },
+        { "phrase": "public interest reporting" },
+        { "phrase": "ai-generated article" },
+        { "phrase": "public-interest text generated by ai" }
+      ]
+    }
+  },
+  "article_4_ai_literacy": {
+    "provider_or_deployer_with_staff": {
+      "description": "Art 4 — providers and deployers of AI systems must ensure their staff and other persons dealing with operation/use on their behalf have a sufficient level of AI literacy. Composite phrases that encode the provider-or-deployer + staff/operator combination; Art 4 has no sub-letters and one trigger fires the whole obligation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "our employees use" },
+        { "phrase": "our staff use" },
+        { "phrase": "our team uses" },
+        { "phrase": "our consultants use" },
+        { "phrase": "our operators use" },
+        { "phrase": "internal users operate" },
+        { "phrase": "staff operating" },
+        { "phrase": "team using ai" },
+        { "phrase": "employees deploying" },
+        { "phrase": "operators rely on" },
+        { "phrase": "our workers use ai" },
+        { "phrase": "internal team operates" },
+        { "phrase": "company staff use" },
+        { "phrase": "consulting team uses" },
+        { "phrase": "consulting team operates" },
+        { "phrase": "our consulting team uses" },
+        { "phrase": "team uses an ai" },
+        { "phrase": "train our consultants" },
+        { "phrase": "train our staff" },
+        { "phrase": "train our employees" },
+        { "phrase": "train our team" },
+        { "phrase": "train our operators" },
+        { "phrase": "ai literacy" },
+        { "phrase": "ai-literacy training" },
+        { "phrase": "consultants on how to use" }
+      ]
+    }
+  },
+  "gpai_models": {
+    "named_foundation_models": {
+      "description": "Art 53/55 — closed list of named general-purpose AI (GPAI) / foundation models. Triggers the Art 53(1) chapeau independently of generic phrasing. Model names are language-neutral proper nouns; the same list appears in both EN and DE lexicons.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "gpt-4" },
+        { "phrase": "gpt-4o" },
+        { "phrase": "gpt-5" },
+        { "phrase": "gpt-4.5" },
+        { "phrase": "gpt-3.5" },
+        { "phrase": "claude 3" },
+        { "phrase": "claude 4" },
+        { "phrase": "claude 3.5" },
+        { "phrase": "claude 3.7" },
+        { "phrase": "claude opus" },
+        { "phrase": "claude sonnet" },
+        { "phrase": "claude haiku 4" },
+        { "phrase": "claude haiku 4.5" },
+        { "phrase": "anthropic claude haiku" },
+        { "phrase": "haiku via api" },
+        { "phrase": "llama 2" },
+        { "phrase": "llama 3" },
+        { "phrase": "llama 4" },
+        { "phrase": "llama-2" },
+        { "phrase": "llama-3" },
+        { "phrase": "gemini 1.5" },
+        { "phrase": "gemini 2" },
+        { "phrase": "gemini pro" },
+        { "phrase": "mistral model" },
+        { "phrase": "mistral llm" },
+        { "phrase": "mistral 7b" },
+        { "phrase": "mistral large" },
+        { "phrase": "mistral api" },
+        { "phrase": "mixtral" },
+        { "phrase": "falcon 40b" },
+        { "phrase": "falcon 180b" },
+        { "phrase": "deepseek model" },
+        { "phrase": "deepseek llm" },
+        { "phrase": "deepseek v3" },
+        { "phrase": "deepseek r1" },
+        { "phrase": "qwen model" },
+        { "phrase": "qwen llm" },
+        { "phrase": "qwen api" },
+        { "phrase": "command r model" },
+        { "phrase": "command r+" },
+        { "phrase": "command-r" },
+        { "phrase": "yi-34b" },
+        { "phrase": "yi 34b chat" },
+        { "phrase": "palm 2" },
+        { "phrase": "anthropic claude" },
+        { "phrase": "openai gpt" },
+        { "phrase": "meta llama" }
+      ]
+    },
+    "generic_foundation_model_phrasing": {
+      "description": "Art 53 — generic phrasing describing a foundation / general-purpose AI MODEL (not a system built on top of one). Triggers the Art 53(1) chapeau when a named model is not explicitly cited but the description identifies the work as building/training a GPAI model.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "foundation model" },
+        { "phrase": "base model" },
+        { "phrase": "general-purpose ai model" },
+        { "phrase": "general purpose ai model" },
+        { "phrase": "frontier model" },
+        { "phrase": "large language model" },
+        { "phrase": "llm provider" },
+        { "phrase": "we train a large language model" },
+        { "phrase": "pretrained model" },
+        { "phrase": "pre-trained model" },
+        { "phrase": "we build an llm" },
+        { "phrase": "general-purpose ai system" }
+      ]
+    },
+    "systemic_risk_markers": {
+      "description": "Art 55 — markers that fire the systemic-risk overlay on top of Art 53. Conservative list (Art 55 should fire rarely): explicit FLOP threshold references, 'systemic risk' phrase, training-compute-threshold references.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "10^25 flop" },
+        { "phrase": "10^25 floating-point operations" },
+        { "phrase": "10^26 flop" },
+        { "phrase": "systemic risk" },
+        { "phrase": "training compute threshold" },
+        { "phrase": "compute threshold" },
+        { "phrase": "presumed systemic risk" },
+        { "phrase": "designated systemic risk" }
+      ]
+    }
+  },
+  "scope_qualifiers": {
+    "research_only": {
+      "description": "Article 2(8) — research, testing, and development activity scope exclusion (pre-market). Surface for the rules engine to consider suppressing high-risk classification.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "research only" },
+        { "phrase": "experimental" },
+        { "phrase": "experimental purpose" },
+        { "phrase": "research and development" },
+        { "phrase": "pre-market testing" }
+      ]
+    },
+    "open_source_exemption": {
+      "description": "Recital 102-104 / Art 2(12) — free and open-source AI components have a narrow exception (does NOT apply to GPAI models with systemic risk or to high-risk systems). Flag for rules engine to handle nuance.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "open-source" },
+        { "phrase": "open source ai" },
+        { "phrase": "permissive license" }
+      ]
+    },
+    "internal_use": {
+      "description": "Operational scope hint (internal / non-public deployment). NOT a regulatory exemption. The rule engine may use this as a soft signal to inform downstream Art 50 transparency obligations, but internal use does NOT exempt a system from Annex III high-risk classification or Article 5 prohibitions if otherwise triggered.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "internal use only" },
+        { "phrase": "internal tooling" },
+        { "phrase": "developer testing" }
+      ]
+    }
+  }
+}
