@@ -15,8 +15,8 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test test/",
-    "check-dist": "node scripts/build.mjs && git diff --exit-code --stat -- dist/ && test -z \"$(git status --porcelain -- dist/)\""
+    "test": "node --test test/*.test.mjs",
+    "check-dist": "node scripts/build.mjs && test -z \"$(git status --porcelain -- dist/)\""
   },
   "dependencies": {
     "@lucairn/ai-act-classifier": "0.3.1",
