@@ -18,9 +18,11 @@ function eurLex(citations, key, lang) {
 }
 
 function annexRef(d, lang) {
-  const sub = d.sub_letters.length ? `(${d.sub_letters.join(", ")})` : "";
+  // Annex III point 2 has no lettered sub-points; never print a sub-letter for it.
+  const letters = d.annex_iii_number === 2 ? [] : d.sub_letters;
+  const sub = letters.length ? `(${letters.join(", ")})` : "";
   return lang === "de"
-    ? `Anhang III Nr. ${d.annex_iii_number}${d.sub_letters.length ? ` Buchst. ${d.sub_letters.join(", ")}` : ""}`
+    ? `Anhang III Nr. ${d.annex_iii_number}${letters.length ? ` Buchst. ${letters.join(", ")}` : ""}`
     : `Annex III point ${d.annex_iii_number}${sub}`;
 }
 
