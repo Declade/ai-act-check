@@ -1,0 +1,95 @@
+{
+  "name": "@lucairn/ai-act-classifier",
+  "version": "0.3.1",
+  "description": "Free CLI from the Lucairn team that maps EU AI Act articles to your AI use case. Companion to Lucairn — the AI evidence layer for EU regulated companies.",
+  "license": "MIT",
+  "author": "Marc Schülke <marc@lucairn.eu> (https://lucairn.eu)",
+  "homepage": "https://lucairn.eu/tools/ai-act-classifier",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Declade/lucairn-ai-act-classifier.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Declade/lucairn-ai-act-classifier/issues"
+  },
+  "keywords": [
+    "eu-ai-act",
+    "ai-act",
+    "compliance",
+    "classifier",
+    "regulation",
+    "annex-iii",
+    "annex-iv",
+    "gpai",
+    "high-risk",
+    "lucairn"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "ai-act-classify": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.de.md",
+    "LICENSE",
+    "DATASET-LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/*.json dist/i18n/ && mkdir -p dist/content/blog-excerpts && cp src/content/blog-excerpts/*.md dist/content/blog-excerpts/ && pnpm run generate-schema && chmod +x dist/cli.js",
+    "generate-schema": "node --import tsx scripts/generate-schema.ts",
+    "verify-tarball": "bash scripts/verify-npm-tarball.sh",
+    "prepack": "pnpm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "typecheck:test": "tsc -p tsconfig.test.json --noEmit",
+    "sync:three-category": "node --import tsx scripts/sync-three-category.ts",
+    "sync:three-category:check": "node --import tsx scripts/sync-three-category.ts --check",
+    "accuracy": "node --import tsx scripts/accuracy.ts",
+    "accuracy:llm-anthropic": "node --import tsx scripts/accuracy.ts --llm anthropic",
+    "accuracy:llm-openai": "node --import tsx scripts/accuracy.ts --llm openai",
+    "accuracy:llm-groq": "node --import tsx scripts/accuracy.ts --llm groq",
+    "accuracy:check": "vitest run test/accuracy"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ajv": "^8.20.0",
+    "tsx": "^4.22.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "private": false,
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.30.1",
+    "openai": "^6.38.0"
+  }
+}

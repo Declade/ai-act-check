@@ -1,0 +1,38 @@
+name: "EU AI Act risk-class check"
+description: "Maps your repo's AI system description to EU AI Act articles with the open-source @lucairn/ai-act-classifier keyword engine. Not legal advice."
+author: "Lucairn"
+branding:
+  icon: "book-open"
+  color: "blue"
+
+inputs:
+  path:
+    description: "Path to the AI system description: a Markdown file, or a YAML file with a top-level `description:` field. When left at the default and ai-system.md is missing, ai-act.yml (then ai-act.yaml) is used."
+    required: false
+    default: "ai-system.md"
+  lang:
+    description: "Language of the description: en or de. The engine matches against that language's lexicon only."
+    required: false
+    default: "en"
+  fail-on:
+    description: "Fail the step when this class is found: none, prohibited, or high-risk (high-risk also fails on prohibited)."
+    required: false
+    default: "none"
+  badge-path:
+    description: "Where to write the shields.io endpoint JSON, relative to the workspace. Set to an empty string to skip. The action does not commit the file."
+    required: false
+    default: ".github/ai-act-badge.json"
+
+outputs:
+  risk-class:
+    description: "One of: prohibited, high-risk, transparency, gpai, no-trigger."
+  triggered:
+    description: 'JSON object with the references that fired, e.g. {"article_5":[],"annex_iii":["Annex III point 4(a)"],"article_50":[],"gpai":[]}.'
+  badge-path:
+    description: "Absolute path of the badge JSON written, or empty when badge-path was empty."
+  engine-version:
+    description: "Version of @lucairn/ai-act-classifier bundled in this action."
+
+runs:
+  using: "node24"
+  main: "dist/index.js"

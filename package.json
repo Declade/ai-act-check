@@ -1,0 +1,28 @@
+{
+  "name": "ai-act-check",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EU AI Act risk-class check for your repo — GitHub Action using the open-source @lucairn/ai-act-classifier engine. Not legal advice.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Lucairn UG (haftungsbeschränkt) (https://lucairn.eu)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Declade/ai-act-check.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/",
+    "check-dist": "node scripts/build.mjs && git diff --exit-code --stat -- dist/ && test -z \"$(git status --porcelain -- dist/)\""
+  },
+  "dependencies": {
+    "@lucairn/ai-act-classifier": "0.3.1",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

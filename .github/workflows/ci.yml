@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: build, dist up to date, tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Rebuild dist/ and fail if it differs from the committed copy
+        run: |
+          npm run build
+          if [ -n "$(git status --porcelain -- dist/)" ]; then
+            echo "::error::dist/ is out of date. Run 'npm ci && npm run build' and commit dist/."
+            git status --porcelain -- dist/
+            git diff --stat -- dist/
+            exit 1
+          fi
+      - run: npm test
+
+  sample:
+    name: sample ${{ matrix.sample }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: [cv-screening, support-chatbot, code-assistant]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run the action (committed dist/)
+        id: aiact
+        uses: ./
+        with:
+          path: samples/${{ matrix.sample }}.md
+          badge-path: .out/ai-act-badge.json
+      - name: Assert class, outputs and badge
+        env:
+          SAMPLE: ${{ matrix.sample }}.md
+          RISK_CLASS: ${{ steps.aiact.outputs.risk-class }}
+          TRIGGERED: ${{ steps.aiact.outputs.triggered }}
+          BADGE: ${{ steps.aiact.outputs.badge-path }}
+        run: |
+          expected=$(node -p "require('./samples/expected.json')[process.env.SAMPLE]")
+          echo "expected=$expected got=$RISK_CLASS triggered=$TRIGGERED"
+          test "$RISK_CLASS" = "$expected"
+          node -e "JSON.parse(process.env.TRIGGERED)"
+          cat "$BADGE"
+          node -e "const b=require(process.env.BADGE); if (b.schemaVersion!==1||!b.message) process.exit(1)"
+      - name: Wording check on summary card, badge and outputs
+        env:
+          INPUT_PATH: samples/${{ matrix.sample }}.md
+          INPUT_LANG: en
+        run: |
+          mkdir -p .out/wording
+          for lang in en de; do
+            env INPUT_LANG=$lang "INPUT_BADGE-PATH=.out/wording/badge-$lang.json" \
+              GITHUB_STEP_SUMMARY=.out/wording/summary-$lang.md GITHUB_OUTPUT=.out/wording/output-$lang.txt \
+              node dist/index.js > .out/wording/log-$lang.txt
+          done
+          ls -l .out/wording
+          hits=$(cat .out/wording/* .out/ai-act-badge.json | grep -ciE 'compliant|konform|minimal risk|minimales risiko' || true)
+          echo "banned-word hits: $hits"
+          test "$hits" = "0"
+
+  cli-parity:
+    name: classes equal the npm CLI
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Compare the published CLI's result with samples/expected.json
+        run: |
+          pin=$(node -p "require('./package.json').dependencies['@lucairn/ai-act-classifier']")
+          echo "engine pin: $pin"
+          for f in cv-screening support-chatbot code-assistant; do
+            npx -y "@lucairn/ai-act-classifier@$pin" --json --lang en < "samples/$f.md" > "/tmp/$f.json"
+            cli=$(node -e '
+              const r = require(process.argv[1]);
+              const c = r.article_5.prohibited ? "prohibited"
+                : (r.annex_iii.high_risk && !r.annex_iii.suppressed_by_article_5) ? "high-risk"
+                : r.article_50.applicable ? "transparency"
+                : (r.gpai.article_53_applicable || r.gpai.article_55_applicable) ? "gpai"
+                : "no-trigger";
+              console.log(c);' "/tmp/$f.json")
+            expected=$(node -p "require('./samples/expected.json')['$f.md']")
+            echo "$f: cli=$cli expected=$expected"
+            test "$cli" = "$expected"
+          done
