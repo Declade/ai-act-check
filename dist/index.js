@@ -1,5 +1,5 @@
 // ai-act-check — bundled GitHub Action. Source: src/; rebuild with `npm run build`.
-// Engine: @lucairn/ai-act-classifier@0.3.1 (MIT). Third-party licences: dist/licenses.txt.
+// Engine: @lucairn/ai-act-classifier@0.4.0 (MIT). Third-party licences: dist/licenses.txt.
 import { createRequire as __aiActCreateRequire } from "node:module";
 const require = __aiActCreateRequire(import.meta.url);
 var __create = Object.create;
@@ -7392,21 +7392,6 @@ function tokenize(normalizedText) {
     return [];
   return normalizedText.split(" ").filter((t) => t.length > 0);
 }
-function ngrams(tokens, minN, maxN) {
-  if (minN < 1)
-    throw new RangeError("ngrams(): minN must be >= 1.");
-  if (maxN < minN)
-    throw new RangeError("ngrams(): maxN must be >= minN.");
-  const out = [];
-  for (let n = minN; n <= maxN; n++) {
-    if (n > tokens.length)
-      break;
-    for (let i = 0; i <= tokens.length - n; i++) {
-      out.push(tokens.slice(i, i + n).join(" "));
-    }
-  }
-  return out;
-}
 var PUNCT_TO_STRIP, WHITESPACE;
 var init_normalize = __esm({
   "node_modules/@lucairn/ai-act-classifier/dist/extract/normalize.js"() {
@@ -7666,6 +7651,441 @@ init_lang();
 import { readFileSync as readFileSync2 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+
+// node_modules/@lucairn/ai-act-classifier/dist/extract/negation.js
+init_normalize();
+var compiledCache = /* @__PURE__ */ new WeakMap();
+function compile(lex) {
+  const cached = compiledCache.get(lex);
+  if (cached !== void 0)
+    return cached;
+  const c = {
+    clauseWords: new Set(lex.clause_words),
+    cues: new Set(lex.cues),
+    nominal: new Set(lex.nominal_cues),
+    listCues: new Set(lex.list_cues),
+    ntStems: new Set(lex.contraction_stems),
+    paired: new Map(Object.entries(lex.paired_cues)),
+    voidAfter: new Set(lex.void_after),
+    det: new Set(lex.determiners),
+    mod: new Set(lex.modifiers),
+    verbs: new Set(lex.governed_verbs),
+    inf: lex.infinitive_marker,
+    maxGap: lex.max_gap,
+    breakers: new Set(lex.breakers),
+    openers: new Set(lex.subclause_openers),
+    preps: new Set(lex.prepositions),
+    without: lex.without,
+    joiners: new Set(lex.list_joiners),
+    pronouns: new Set(lex.clause_pronouns),
+    closers: new Set(lex.closers),
+    cancel: new Set(lex.cancel_after),
+    trailAux: new Set(lex.trailing_aux),
+    trailFill: new Set(lex.trailing_fillers),
+    trailNeg: new Set(lex.trailing_negators),
+    trailBe: new Set(lex.trailing_be),
+    trailPred: new Set(lex.trailing_predicates),
+    trailPost: new Set(lex.trailing_post),
+    bareVerbs: new Set(lex.bare_verbs),
+    bareParticles: new Set(lex.bare_particles)
+  };
+  compiledCache.set(lex, c);
+  return c;
+}
+var STRING_LISTS = [
+  "clause_words",
+  "cues",
+  "nominal_cues",
+  "list_cues",
+  "contraction_stems",
+  "void_after",
+  "determiners",
+  "modifiers",
+  "governed_verbs",
+  "breakers",
+  "subclause_openers",
+  "prepositions",
+  "list_joiners",
+  "clause_pronouns",
+  "closers",
+  "cancel_after",
+  "trailing_aux",
+  "trailing_fillers",
+  "trailing_negators",
+  "trailing_be",
+  "trailing_predicates",
+  "trailing_post",
+  "bare_verbs",
+  "bare_particles"
+];
+function isNegationLexicon(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value))
+    return false;
+  const v = value;
+  const strList = (k) => Array.isArray(v[k]) && v[k].every((x) => typeof x === "string");
+  return STRING_LISTS.every(strList) && typeof v.without === "string" && typeof v.infinitive_marker === "string" && typeof v.max_gap === "number" && Number.isInteger(v.max_gap) && v.max_gap >= 0 && v.paired_cues !== null && typeof v.paired_cues === "object" && !Array.isArray(v.paired_cues) && Object.values(v.paired_cues).every((x) => typeof x === "string");
+}
+var SPLIT = /[.!?;:\n\r,()[\]{}<>«»]/;
+var BREAK_TOKEN = /^[^\p{L}\p{N}]+$|[–—/\\•·|]/u;
+function tokenizeWithBreaks(text, c) {
+  const reference = tokenize(normalize(text));
+  const tokens = [];
+  const breakBefore = [];
+  const commaOnly = [];
+  const hardBefore = [];
+  const nfkc = text.normalize("NFKC");
+  let piece = "";
+  let pendingSep = "";
+  const flush = () => {
+    const toks = tokenize(normalize(piece));
+    toks.forEach((tok, k) => {
+      tokens.push(tok);
+      const sep = k === 0 ? pendingSep : "";
+      breakBefore.push(sep.length > 0);
+      commaOnly.push(sep.length > 0 && /^[,\s]+$/.test(sep));
+      hardBefore.push(/[.!?;:\n\r]/.test(sep));
+    });
+    if (toks.length > 0)
+      pendingSep = "";
+    piece = "";
+  };
+  for (const ch of nfkc) {
+    if (SPLIT.test(ch)) {
+      flush();
+      pendingSep += ch;
+    } else {
+      piece += ch;
+    }
+  }
+  flush();
+  const aligned = reference.length === tokens.length && reference.every((t, i) => t === tokens[i]);
+  if (!aligned)
+    return null;
+  if (breakBefore.length > 0) {
+    breakBefore[0] = false;
+    commaOnly[0] = false;
+    hardBefore[0] = false;
+  }
+  const isBreak = tokens.map((t) => BREAK_TOKEN.test(t));
+  const clause = [];
+  let id = 0;
+  tokens.forEach((t, i) => {
+    if (i > 0 && (breakBefore[i] || isBreak[i] || isBreak[i - 1] || c.clauseWords.has(t)))
+      id++;
+    clause.push(id);
+  });
+  return { tokens, breakBefore, commaOnly, hardBefore, isBreak, clause };
+}
+function joined(t, i) {
+  return i > 0 && !t.breakBefore[i] && !t.isBreak[i] && !t.isBreak[i - 1];
+}
+function cueEndingAt(t, c, i) {
+  const tok = t.tokens[i];
+  let cue = null;
+  if (tok === "t" && i > 0 && c.ntStems.has(t.tokens[i - 1]) && joined(t, i)) {
+    cue = { start: i - 1, last: i, nominal: false, list: false, text: `${t.tokens[i - 1]}'t` };
+  } else if (c.cues.has(tok)) {
+    cue = { start: i, last: i, nominal: c.nominal.has(tok), list: c.listCues.has(tok), text: tok };
+  } else {
+    const partner = c.paired.get(tok);
+    if (partner !== void 0) {
+      for (let k = i - 1; k >= 0 && t.clause[k] === t.clause[i]; k--) {
+        if (t.tokens[k] === partner) {
+          cue = { start: i, last: i, nominal: c.nominal.has(tok), list: c.listCues.has(tok), text: tok };
+          break;
+        }
+      }
+    }
+  }
+  if (cue === null)
+    return null;
+  const next = t.tokens[i + 1];
+  if (next !== void 0 && joined(t, i + 1) && c.voidAfter.has(next))
+    return null;
+  return cue;
+}
+function cuesBefore(t, c, before) {
+  let n = 0;
+  let k = before - 1;
+  let ci = t.clause[before];
+  for (; ; ) {
+    let clauseStart = k + 1;
+    for (; k >= 0 && t.clause[k] === ci; k--) {
+      clauseStart = k;
+      const cue = cueEndingAt(t, c, k);
+      if (cue !== null) {
+        if (!cue.list)
+          n++;
+        k = cue.start;
+        clauseStart = k;
+        continue;
+      }
+      if (t.tokens[k] === c.without)
+        n++;
+    }
+    if (k < 0 || !t.commaOnly[clauseStart])
+      return n;
+    const first = t.tokens[clauseStart];
+    const second = t.tokens[clauseStart + 1];
+    const opens = c.openers.has(first) || c.preps.has(first) && second !== void 0 && c.openers.has(second);
+    if (!opens)
+      return n;
+    ci = t.clause[k];
+  }
+}
+function withoutLater(t, c, from, clauseOf) {
+  const ci = t.clause[clauseOf];
+  for (let k = from; k < t.tokens.length && t.clause[k] === ci; k++) {
+    if (t.tokens[k] === c.without)
+      return true;
+  }
+  return false;
+}
+function forwardCue(t, c, s) {
+  const gap = [];
+  let j = s - 1;
+  let cue = null;
+  let withoutAt = -1;
+  while (j >= 0) {
+    if (!joined(t, j + 1))
+      return null;
+    const tok = t.tokens[j];
+    if (tok === c.without) {
+      withoutAt = j;
+      break;
+    }
+    cue = cueEndingAt(t, c, j);
+    if (cue !== null)
+      break;
+    if (gap.length >= c.maxGap)
+      return null;
+    if (c.breakers.has(tok))
+      return null;
+    if (!(c.det.has(tok) || c.mod.has(tok) || c.verbs.has(tok) || c.inf !== "" && tok === c.inf))
+      return null;
+    gap.unshift(tok);
+    j--;
+  }
+  const detOrMod = (x) => c.det.has(x) || c.mod.has(x);
+  if (withoutAt >= 0) {
+    if (!gap.every(detOrMod))
+      return null;
+    if (cuesBefore(t, c, withoutAt) % 2 === 1)
+      return null;
+    return { cue: [c.without, ...gap].join(" "), clauseOf: withoutAt };
+  }
+  if (cue === null)
+    return null;
+  let p = 0;
+  if (!cue.nominal) {
+    if (c.inf !== "" && gap[p] === c.inf)
+      p++;
+    if (p < gap.length && c.verbs.has(gap[p]))
+      p++;
+  }
+  for (; p < gap.length; p++)
+    if (!detOrMod(gap[p]))
+      return null;
+  const others = cuesBefore(t, c, cue.start);
+  const count = cue.list ? Math.max(others, 1) : others + 1;
+  if (count % 2 === 0)
+    return null;
+  return { cue: [cue.text, ...gap].join(" "), clauseOf: cue.start };
+}
+function clauseEndsAt(t, c, j) {
+  if (j >= t.tokens.length)
+    return true;
+  return t.breakBefore[j] === true || t.isBreak[j] === true || c.clauseWords.has(t.tokens[j]);
+}
+function cancelledAt(t, c, j) {
+  let k = j;
+  while (k < t.tokens.length && t.isBreak[k])
+    k++;
+  return k < t.tokens.length && c.cancel.has(t.tokens[k]);
+}
+function trailingCue(t, c, s, e) {
+  const n = t.tokens.length;
+  const tok = (j2) => j2 < n && joined(t, j2) ? t.tokens[j2] : void 0;
+  const finish = (j2, from) => {
+    if (!clauseEndsAt(t, c, j2))
+      return null;
+    if (cancelledAt(t, c, j2))
+      return null;
+    if ((cuesBefore(t, c, s) + 1) % 2 === 0)
+      return null;
+    return t.tokens.slice(from, j2).join(" ");
+  };
+  let j = e;
+  let gap = 0;
+  while (gap < c.maxGap) {
+    const x = tok(j);
+    if (x === void 0 || !(c.trailAux.has(x) || c.trailFill.has(x)))
+      break;
+    j++;
+    gap++;
+  }
+  let negOk = false;
+  const x0 = tok(j);
+  if (x0 !== void 0) {
+    if (c.trailNeg.has(x0)) {
+      j += 1;
+      negOk = true;
+    } else if (c.cues.has(x0) && c.trailAux.has(x0.replace(/not$/, ""))) {
+      j += 1;
+      negOk = true;
+    } else if (c.ntStems.has(x0) && tok(j + 1) === "t") {
+      j += 2;
+      negOk = true;
+    }
+  }
+  if (negOk) {
+    let k = j;
+    for (let b = 0; b < 2; b++) {
+      const y = tok(k);
+      if (y !== void 0 && c.trailBe.has(y))
+        k++;
+    }
+    const pred = tok(k);
+    if (pred !== void 0 && c.trailPred.has(pred)) {
+      k++;
+      for (let b = 0; b < 2; b++) {
+        const y = tok(k);
+        if (y !== void 0 && c.trailPost.has(y))
+          k++;
+      }
+      const r = finish(k, e);
+      if (r !== null)
+        return r;
+    }
+  }
+  if (c.bareVerbs.size > 0) {
+    let b = s - 1;
+    let g = 0;
+    while (b >= 0 && joined(t, b + 1) && g <= c.maxGap) {
+      const w = t.tokens[b];
+      if (c.det.has(w) || c.mod.has(w)) {
+        b--;
+        g++;
+        continue;
+      }
+      break;
+    }
+    const verb = b >= 0 && joined(t, b + 1) ? t.tokens[b] : void 0;
+    const neg = tok(e);
+    if (verb !== void 0 && c.bareVerbs.has(verb) && neg !== void 0 && c.trailNeg.has(neg)) {
+      let k = e + 1;
+      const part = tok(k);
+      if (part !== void 0 && c.bareParticles.has(part))
+        k++;
+      const r = finish(k, e);
+      if (r !== null)
+        return r;
+    }
+  }
+  return null;
+}
+function negatedClauseAt(t, c, k) {
+  const n = t.tokens.length;
+  for (let j = k, skipped = 0; j < n && skipped <= 3; j++) {
+    if (j > k && !joined(t, j))
+      return false;
+    if (t.isBreak[j])
+      return false;
+    const cue = cueEndingAt(t, c, j);
+    if (cue !== null)
+      return true;
+    if (j + 1 < n && t.tokens[j + 1] === "t" && c.ntStems.has(t.tokens[j]))
+      continue;
+    const w = t.tokens[j];
+    if (!(c.trailAux.has(w) || c.pronouns.has(w) || c.verbs.has(w) || c.bareVerbs.has(w) || c.det.has(w)))
+      return false;
+    skipped++;
+  }
+  return false;
+}
+function joinerAt(t, c, j) {
+  if (j >= t.tokens.length)
+    return -1;
+  const comma = t.breakBefore[j] === true && t.commaOnly[j] === true;
+  if (t.breakBefore[j] && !comma)
+    return -1;
+  if (t.isBreak[j])
+    return -1;
+  const w = t.tokens[j];
+  if (c.joiners.has(w))
+    return j + 1;
+  return comma ? j : -1;
+}
+function closedList(t, c, longestAt, s, e) {
+  const n = t.tokens.length;
+  const members = [{ start: s, end: e }];
+  let pos = e;
+  for (let guard = 0; guard < 32; guard++) {
+    let p = pos;
+    if (p < n && joined(t, p) && c.closers.has(t.tokens[p]))
+      p++;
+    if (p >= n || t.hardBefore[p] === true)
+      return members;
+    const after = joinerAt(t, c, p);
+    if (after < 0)
+      return null;
+    if (p === pos) {
+      let m = after;
+      while (m < n && m < after + 2 && joined(t, m) && c.det.has(t.tokens[m]))
+        m++;
+      const e2 = longestAt.get(m);
+      if (e2 !== void 0 && (m === after || joined(t, m))) {
+        members.push({ start: m, end: e2 });
+        pos = e2;
+        continue;
+      }
+    }
+    return negatedClauseAt(t, c, after) ? members : null;
+  }
+  return null;
+}
+function findNegated(text, lex, occs) {
+  const off = { active: false, negated: /* @__PURE__ */ new Map() };
+  if (lex === void 0)
+    return off;
+  const c = compile(lex);
+  const t = tokenizeWithBreaks(text, c);
+  if (t === null)
+    return off;
+  const longestAt = /* @__PURE__ */ new Map();
+  for (const o of occs) {
+    const cur = longestAt.get(o.start);
+    if (cur === void 0 || o.end > cur)
+      longestAt.set(o.start, o.end);
+  }
+  const spans = [];
+  const starts = [...longestAt.keys()].sort((a, b) => a - b);
+  for (const s of starts) {
+    const e = longestAt.get(s);
+    const fwd = forwardCue(t, c, s);
+    if (fwd !== null && !withoutLater(t, c, s, fwd.clauseOf)) {
+      const members = closedList(t, c, longestAt, s, e) ?? [{ start: s, end: e }];
+      for (const m of members)
+        spans.push({ start: m.start, end: m.end, cue: fwd.cue });
+      continue;
+    }
+    const trail = trailingCue(t, c, s, e);
+    if (trail !== null)
+      spans.push({ start: s, end: e, cue: trail });
+  }
+  const negated = /* @__PURE__ */ new Map();
+  occs.forEach((o, idx) => {
+    for (const sp of spans) {
+      if (o.start >= sp.start && o.start < sp.end) {
+        negated.set(idx, sp.cue);
+        return;
+      }
+    }
+  });
+  return { active: true, negated };
+}
+
+// node_modules/@lucairn/ai-act-classifier/dist/extract/keyword.js
 var RESERVED_KEYS = /* @__PURE__ */ new Set(["language", "version"]);
 function discoverGroups(lexicon) {
   return Object.keys(lexicon).filter((k) => !RESERVED_KEYS.has(k) && !k.startsWith("_"));
@@ -7697,55 +8117,97 @@ function extractFeatures(text, opts = {}) {
   const minN = opts.minN ?? 1;
   const maxN = opts.maxN ?? 6;
   const tokens = tokenize(normalized);
-  const candidates = ngrams(tokens, minN, maxN);
-  const candidateSet = new Set(candidates);
-  for (const token of tokens) {
+  if (minN < 1)
+    throw new RangeError("extractFeatures(): minN must be >= 1.");
+  if (maxN < minN)
+    throw new RangeError("extractFeatures(): maxN must be >= minN.");
+  const occurrences = /* @__PURE__ */ new Map();
+  const addOccurrence = (phrase, start, end) => {
+    const list = occurrences.get(phrase);
+    if (list === void 0)
+      occurrences.set(phrase, [{ start, end }]);
+    else
+      list.push({ start, end });
+  };
+  for (let n = minN; n <= maxN && n <= tokens.length; n++) {
+    for (let i = 0; i <= tokens.length - n; i++) {
+      addOccurrence(tokens.slice(i, i + n).join(" "), i, i + n);
+    }
+  }
+  tokens.forEach((token, i) => {
     if (token.includes("-")) {
       for (const part of token.split("-")) {
         if (part.length > 0)
-          candidateSet.add(part);
+          addOccurrence(part, i, i + 1);
       }
     }
-  }
-  const hits = [];
-  const byCategory = {};
+  });
   const groups = discoverGroups(lexicon);
-  for (const group of groups)
-    byCategory[group] = {};
+  const matches = [];
   for (const group of groups) {
     const raw = lexicon[group];
     if (raw === void 0 || raw === null || typeof raw !== "object")
       continue;
     const categories = raw;
     for (const [categoryKey, category] of Object.entries(categories)) {
-      const matched = [];
       for (const entry of category.entries) {
-        const phraseNormalized = normalize(entry.phrase);
-        if (candidateSet.has(phraseNormalized)) {
-          matched.push(entry.phrase);
-          hits.push({
-            group,
-            category: categoryKey,
-            phrase: entry.phrase,
-            source: entry.source ?? category.source
-          });
-        }
-      }
-      if (matched.length > 0) {
-        const groupBucket = byCategory[group];
-        if (groupBucket !== void 0) {
-          groupBucket[categoryKey] = matched;
-        }
+        const occs = occurrences.get(normalize(entry.phrase));
+        if (occs !== void 0)
+          matches.push({ group, categoryKey, category, entry, occs });
       }
     }
   }
+  const hits = [];
+  const byCategory = {};
+  for (const group of groups)
+    byCategory[group] = {};
+  for (const m of matches) {
+    hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source });
+    const groupBucket = byCategory[m.group];
+    if (groupBucket !== void 0) {
+      const bucket = groupBucket[m.categoryKey];
+      if (bucket === void 0)
+        groupBucket[m.categoryKey] = [m.entry.phrase];
+      else
+        bucket.push(m.entry.phrase);
+    }
+  }
+  const rawNegation = lexicon._negation;
+  const negationLex = isNegationLexicon(rawNegation) ? rawNegation : void 0;
+  const flat = [];
+  const owner = [];
+  matches.forEach((m, mi) => {
+    for (const o of m.occs) {
+      flat.push(o);
+      owner.push(mi);
+    }
+  });
+  const negation = findNegated(text, negationLex, flat);
+  const plain = matches.map(() => false);
+  const cueOf = matches.map(() => void 0);
+  flat.forEach((_o, idx) => {
+    const mi = owner[idx];
+    const cue = negation.negated.get(idx);
+    if (cue === void 0)
+      plain[mi] = true;
+    else if (cueOf[mi] === void 0)
+      cueOf[mi] = cue;
+  });
+  const negatedHits = [];
+  matches.forEach((m, mi) => {
+    const cue = cueOf[mi];
+    if (plain[mi] || cue === void 0)
+      return;
+    negatedHits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source, cue });
+  });
   return {
     input: text,
     lang,
     langConfident: detection.confident,
     lexiconVersion: lexicon.version,
     hits,
-    byCategory
+    byCategory,
+    negatedHits
   };
 }
 
@@ -9004,6 +9466,51 @@ var RULES_VERSION = loadRulesVersion();
 var RULES_HASH = RULES_HASH_SHORT;
 var RULES_HASH_FULL_HEX = RULES_HASH_FULL;
 
+// node_modules/@lucairn/ai-act-classifier/dist/util/negated-hits.js
+var ART50_PARAGRAPH = {
+  "1": 1,
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 4
+};
+function negatedHitRef(group, category, locale = "en") {
+  const de = locale === "de";
+  const lead = category.split("_")[0] ?? "";
+  switch (group) {
+    case "article_5_prohibited":
+      return /^[a-h]$/.test(lead) ? de ? `Art. 5 Abs. 1 Buchst. ${lead}` : `Art 5(1)(${lead})` : de ? "Art. 5" : "Art 5";
+    case "annex_iii":
+      return /^[1-8]$/.test(lead) ? de ? `Anhang III Nr. ${lead}` : `Annex III.${lead}` : de ? "Anhang III" : "Annex III";
+    case "article_50_gpai": {
+      const p = ART50_PARAGRAPH[lead];
+      if (p === void 0)
+        return de ? "Art. 50" : "Art 50";
+      return de ? `Art. 50 Abs. ${p}` : `Art 50(${p})`;
+    }
+    case "article_4_ai_literacy":
+      return de ? "Art. 4" : "Art 4";
+    case "gpai_models":
+      return category === "systemic_risk_markers" ? de ? "Art. 55" : "Art 55" : de ? "Art. 53" : "Art 53";
+    case "scope_qualifiers":
+      return de ? "Anwendungsbereich" : "scope qualifier";
+    default:
+      return `${group}/${category}`;
+  }
+}
+function toNegatedHitResults(hits) {
+  if (hits === void 0)
+    return [];
+  return hits.map((h) => ({
+    phrase: h.phrase,
+    ref: negatedHitRef(h.group, h.category, "en"),
+    cue: h.cue,
+    group: h.group,
+    category: h.category,
+    source: h.source
+  }));
+}
+
 // node_modules/@lucairn/ai-act-classifier/dist/classify.js
 function computeConfidence(features) {
   const baseline = 0.4;
@@ -9060,7 +9567,8 @@ async function classify(text, opts = {}) {
     article_4,
     gpai,
     three_category,
-    annex_iv_required
+    annex_iv_required,
+    negated_hits: toNegatedHitResults(features.negatedHits)
   };
 }
 
@@ -9253,7 +9761,7 @@ var citations_default = {
 };
 
 // engine-meta:engine-package
-var engine_package_default = { name: "@lucairn/ai-act-classifier", version: "0.3.1" };
+var engine_package_default = { name: "@lucairn/ai-act-classifier", version: "0.4.0" };
 
 // src/engine.mjs
 var ENGINE_NAME = engine_package_default.name;
