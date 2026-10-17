@@ -62,13 +62,19 @@ export function containedParts(root, userPath, what) {
   if (isAbsolute(userPath) || /^[\\/]/.test(userPath) || /^[A-Za-z]:/.test(userPath)) {
     throw new UnsafePathError(`Input "${what}" must be a path relative to the workspace; got the absolute path ${q(userPath)}.`);
   }
+  // Writes only: Windows stream names (".git::$INDEX_ALLOCATION") could reach .git. Reads keep ":" so
+  // hostile names still go through the escaping paths (and the .git alias check below covers both).
+  if (what === "badge-path" && userPath.includes(":")) {
+    throw new UnsafePathError(`Input "${what}" must not contain ":" (Windows stream names are refused).`);
+  }
   const abs = resolve(root, userPath);
   const rel = relative(root, abs);
   if (rel === "" || rel === ".." || rel.startsWith(".." + sep) || isAbsolute(rel)) {
     throw new UnsafePathError(`Input "${what}" ${q(userPath)} points outside the workspace.`);
   }
   const parts = rel.split(sep);
-  if (parts.some((p) => p.toLowerCase() === ".git")) {
+  // Windows also resolves ".git." / ".git " (trailing dots or spaces) and the 8.3 short name "GIT~1" to .git.
+  if (parts.some((p) => { const n = p.replace(/[. ]+$/, "").toLowerCase(); return n === ".git" || /^git~\d+$/.test(n); })) {
     throw new UnsafePathError(`Input "${what}" ${q(userPath)} points into a .git directory.`);
   }
   return parts;
@@ -130,7 +136,9 @@ export function readRegularFile(abs, limit, label) {
     throw new UnsafePathError(`${q(label)} could not be opened (${e && e.code ? e.code : "error"}).`);
   }
   try {
-    if (!fstatSync(fd).isFile()) throw new UnsafePathError(`${q(label)} is not a regular file.`);
+    const st = fstatSync(fd);
+    if (!st.isFile()) throw new UnsafePathError(`${q(label)} is not a regular file.`);
+    if (st.nlink > 1) throw new UnsafePathError(`${q(label)} is a hard link; the action only reads plain files.`);
     const buf = Buffer.alloc(limit + 1);
     let n = 0;
     while (n < buf.length) {

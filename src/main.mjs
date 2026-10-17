@@ -31,6 +31,9 @@ function choice(name, value, allowed) {
 }
 
 async function main() {
+  // The bundled yaml library prints parsed source when these are set; the action never prints file content.
+  delete process.env.LOG_TOKENS;
+  delete process.env.LOG_STREAM;
   const cwd = process.env.GITHUB_WORKSPACE || process.cwd();
   const root = workspaceRoot(cwd);
   const lang = choice("lang", input("lang", "en").toLowerCase(), ["en", "de"]);

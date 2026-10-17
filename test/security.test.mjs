@@ -4,7 +4,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from "node:fs";
+import { existsSync, linkSync, lstatSync, mkdirSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { run, sample } from "./helpers/run.mjs";
 
@@ -280,4 +280,42 @@ test("negated text: note under the finding, verdict unchanged (DE)", () => {
 test("no negation: no note", () => {
   const r = run({ files: { "ai-system.md": PROHIBITED_TEXT } });
   assert.doesNotMatch(r.summary, /appears to deny it/);
+});
+
+// ------------------------------------------------- hardening after ToB review
+
+test("badge-path: ':' (drive letters, Windows stream names) is refused", () => {
+  const r = run({ files: { "ai-system.md": PROHIBITED_TEXT }, inputs: { "badge-path": ".git::$INDEX_ALLOCATION/info/x.json" } });
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(r.stdout, /::error::Input "badge-path" must not contain ":"/);
+});
+
+test("badge-path: Windows aliases of .git (trailing dot/space, GIT~1) are refused", () => {
+  for (const p of [".git./x.json", ".git /x.json", "GIT~1/x.json"]) {
+    const r = run({ files: { "ai-system.md": PROHIBITED_TEXT }, inputs: { "badge-path": p } });
+    assert.equal(r.status, 1, `${p}: ${r.stdout}`);
+    assert.match(r.stdout, /points into a \.git directory/, p);
+  }
+});
+
+test("path: a hard link to a file outside the workspace is refused", () => {
+  const r = run({
+    files: {},
+    setup: ({ ws, outside }) => {
+      writeFileSync(join(outside, "secret.txt"), "SECRET-OUTSIDE social scoring");
+      linkSync(join(outside, "secret.txt"), join(ws, "ai-system.md"));
+    },
+  });
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(r.stdout, /is a hard link/);
+  assert.doesNotMatch(r.stdout + r.stderr, /SECRET-OUTSIDE/);
+});
+
+test("LOG_TOKENS / LOG_STREAM cannot make the yaml library print file source", () => {
+  const r = run({
+    files: { "ai-act.yml": "description: 'MARKER-SOURCE-TEXT social scoring'\n" },
+    inputs: { path: "ai-act.yml" },
+    env: { LOG_TOKENS: "1", LOG_STREAM: "1" },
+  });
+  assert.doesNotMatch(r.stdout + r.stderr, /MARKER-SOURCE-TEXT/);
 });

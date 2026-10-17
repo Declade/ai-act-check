@@ -28,6 +28,8 @@ jobs:
 
 The result shows up as a card on the run's summary page.
 
+For production workflows, pin the action to a full commit SHA instead of the movable `v1` tag (GitHub's own hardening advice), e.g. `uses: Declade/ai-act-check@<40-character commit SHA> # v1.0.0`; the SHA of each release is listed on the [releases page](https://github.com/Declade/ai-act-check/releases).
+
 Prefer YAML? Use `ai-act.yml` instead of `ai-system.md`; the action picks it up automatically:
 
 ```yaml
