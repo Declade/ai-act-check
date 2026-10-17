@@ -48,14 +48,14 @@ description: |
 
 | Output | Example |
 |---|---|
-| `risk-class` | `prohibited`, `high-risk`, `transparency`, `gpai`, or `no-trigger` |
+| `risk-class` | `prohibited`, `high-risk`, `transparency`, `gpai`, or `no-trigger` (machine values; `prohibited` and `high-risk` mean a keyword match, shown to people as "possible …") |
 | `triggered` | `{"article_5":[],"annex_iii":["Annex III point 4(a)"],"article_50":[],"gpai":[]}` |
 | `badge-path` | absolute path of the badge JSON, empty when skipped |
 | `engine-version` | the bundled engine version, e.g. `0.3.1` |
 
-When more than one class fires, the highest one wins: Article 5, then Annex III, then Article 50, then Articles 53 / 55. `triggered` lists everything that fired.
+When more than one class fires, this tool reports Article 5 first, then Annex III, then Article 50, then Articles 53 / 55. `triggered` lists everything that fired.
 
-The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, the obligations the engine lists for a high-risk result (Articles 10, 12–15, Annex IV), the caveats below, a "Share this result" link to the browser tool, and the engine version.
+The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, the obligations the engine lists for a possible high-risk result (Articles 10, 12–15, Article 11 / Annex IV), the caveats below, a "Share this result" link to the browser tool, and the engine version.
 
 ```yaml
       - id: aiact
@@ -70,10 +70,10 @@ The summary card shows the class, each Article 5 letter / Annex III point / Arti
 The action writes a [shields.io endpoint](https://shields.io/badges/endpoint-badge) file, for example:
 
 ```json
-{ "schemaVersion": 1, "label": "EU AI Act", "message": "high-risk", "color": "orange" }
+{ "schemaVersion": 1, "label": "EU AI Act", "message": "possible high-risk", "color": "orange" }
 ```
 
-The message is the risk class only. A run where nothing fired says `no trigger found`, in grey.
+The message is the risk class only: `possible prohibited practice`, `possible high-risk`, `transparency`, `GPAI`, or `no trigger found` (grey).
 
 shields.io needs to fetch that file from a public URL, so you publish it yourself. The simplest way is to commit it on pushes to your default branch:
 
@@ -111,7 +111,8 @@ For a private repo, write the file to a public gist or another public location i
 
 - **A deterministic keyword rules engine.** It matches your wording against a curated lexicon. A description that avoids the lexicon's vocabulary can miss a trigger, and negated or unusual wording can be misread. Write the description in plain words about what the system does.
 - **98.8% on 71 test cases** measures consistency with the curated lexicon, not real-world accuracy.
-- **Not legal advice.** Output is grounded against Regulation (EU) 2024/1689, the EU AI Office Service Desk, and BSI / BfDI / Bitkom guidance. Use it as a starting point; verify with your DPO and qualified counsel before acting on any classification.
+- **Not legal advice.** Use it as a starting point; verify with your DPO and qualified counsel before acting on any classification.
+- **A keyword match is not a final classification:** Article 6(3) and Article 5 exceptions are not assessed. That is why the card and badge say "possible high-risk" and "possible prohibited practice".
 - **"No trigger found" is not a clean bill of health.** It means no lexicon phrase matched. It never says that no obligation applies, and this action never calls a system "compliant" or "minimal risk".
 - **EUR-Lex links** open the full regulation; the article is named next to each link.
 - **No data leaves the runner.** The engine runs inside the job. The action only uses the engine's deterministic path; the engine's optional LLM mode is left out of the bundle, and `dist/index.js` contains no network code. The test suite runs the bundle with every network call blocked and checks that none was attempted.
@@ -136,7 +137,7 @@ Legen Sie eine kurze Beschreibung Ihres KI-Systems als `ai-system.md` (oder `ai-
 
 Die Action ordnet die Beschreibung der KI-Verordnung (EU) 2024/1689 zu (Artikel 5, Anhang III, Artikel 50, Artikel 53 / 55), schreibt eine Ergebniskarte in den Job, setzt die Ausgaben `risk-class` und `triggered` und schreibt eine Badge-Datei. Die Engine läuft im Job; es wird kein Text versendet.
 
-**Informationswerkzeug — keine Rechtsberatung.** Deterministische Schlüsselwort-Regel-Engine: Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Auslöser verfehlen. Die 98,8 % auf 71 Testfällen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt. „Kein Auslöser gefunden“ heißt nur, dass kein Begriff aus dem Lexikon gefunden wurde.
+**Informationswerkzeug — keine Rechtsberatung.** Deterministische Schlüsselwort-Regel-Engine: Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Auslöser verfehlen. Die 98,8 % auf 71 Testfällen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt. Ein Stichwort-Treffer ist keine abschließende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht geprüft. „Kein Auslöser gefunden“ heißt nur, dass kein Begriff aus dem Lexikon gefunden wurde.
 
 Im Browser ausprobieren: [lucairn.eu/de/tools/ai-act-classifier](https://lucairn.eu/de/tools/ai-act-classifier).
 

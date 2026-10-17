@@ -2,7 +2,7 @@
 
 import { ART5_LETTER, ART50_PATH, CLASS_COLOR, CLASS_TEXT, TOOL_URL, UI } from "./text.mjs";
 
-/** Precedence follows the Act's structure: Art. 5 > Annex III > Art. 50 > GPAI > none. */
+/** This tool's ordering when several classes fire: Art. 5 > Annex III > Art. 50 > GPAI > none. */
 export function riskClass(r) {
   if (r.article_5.prohibited) return "prohibited";
   if (r.annex_iii.high_risk && !r.annex_iii.suppressed_by_article_5) return "high-risk";
@@ -95,7 +95,12 @@ export function obligations(r, citations, lang) {
   for (const key of ["article_10", "article_12", "article_13", "article_14", "article_15"]) {
     if (r[key] && r[key].applicable) rows.push({ label: citations[key][lang === "de" ? "label_de" : "label_en"], url: eurLex(citations, key, lang) });
   }
-  if (r.annex_iv_required) rows.push({ label: citations.annex_iv[lang === "de" ? "label_de" : "label_en"], url: eurLex(citations, "annex_iv", lang) });
+  if (r.annex_iv_required) {
+    rows.push({
+      label: lang === "de" ? "Artikel 11 / Anhang IV (technische Dokumentation)" : "Article 11 / Annex IV (technical documentation)",
+      url: eurLex(citations, "annex_iv", lang),
+    });
+  }
   return rows;
 }
 
@@ -137,6 +142,7 @@ export function summaryMarkdown({ r, cls, citations, lang, sourcePath, engine })
   }
   L.push(`### ${t.caveats}`, "");
   L.push(`- ${t.disclaimer}`);
+  L.push(`- ${t.notFinal}`);
   L.push(`- ${t.engineNote}`);
   L.push(`- ${t.localNote}`);
   L.push(`- ${t.links}`);

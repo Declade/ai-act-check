@@ -9274,15 +9274,15 @@ var TOOL_URL = {
 };
 var CLASS_TEXT = {
   en: {
-    prohibited: { badge: "prohibited", title: "Prohibited practice (Article 5)" },
-    "high-risk": { badge: "high-risk", title: "High-risk (Article 6 + Annex III)" },
+    prohibited: { badge: "possible prohibited practice", title: "Article 5 trigger matched (possible prohibited practice)" },
+    "high-risk": { badge: "possible high-risk", title: "Annex III area matched (possible high-risk, Article 6)" },
     transparency: { badge: "transparency", title: "Transparency obligation (Article 50)" },
     gpai: { badge: "GPAI", title: "General-purpose AI model obligations (Articles 53 / 55)" },
     "no-trigger": { badge: "no trigger found", title: "No trigger found" }
   },
   de: {
-    prohibited: { badge: "verboten", title: "Verbotene Praktik (Artikel 5)" },
-    "high-risk": { badge: "Hochrisiko", title: "Hochrisiko (Artikel 6 + Anhang III)" },
+    prohibited: { badge: "m\xF6gliche verbotene Praktik", title: "Artikel-5-Ausl\xF6ser erkannt (m\xF6gliche verbotene Praktik)" },
+    "high-risk": { badge: "m\xF6glicherweise Hochrisiko", title: "Anhang-III-Bereich erkannt (m\xF6glicherweise Hochrisiko, Artikel 6)" },
     transparency: { badge: "Transparenz", title: "Transparenzpflicht (Artikel 50)" },
     gpai: { badge: "GPAI", title: "Pflichten f\xFCr KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53 / 55)" },
     "no-trigger": { badge: "kein Ausl\xF6ser gefunden", title: "Kein Ausl\xF6ser gefunden" }
@@ -9299,21 +9299,21 @@ var ART5_LETTER = {
   en: {
     a: "subliminal, manipulative or deceptive techniques",
     b: "exploitation of vulnerabilities",
-    c: "social scoring",
-    d: "crime risk assessment based solely on profiling",
+    c: "evaluation or classification of persons based on social behaviour or personal characteristics",
+    d: "risk assessment of committing a criminal offence based solely on profiling or personality traits",
     e: "untargeted scraping of facial images",
-    f: "emotion recognition in the workplace or education",
-    g: "biometric categorisation inferring sensitive characteristics",
-    h: "real-time remote biometric identification in public spaces for law enforcement"
+    f: "inferring emotions in the workplace and education institutions (except for medical or safety reasons)",
+    g: "biometric categorisation inferring race, political opinions, trade union membership, religion or beliefs, sex life or sexual orientation",
+    h: "real-time remote biometric identification in publicly accessible spaces for law enforcement"
   },
   de: {
     a: "unterschwellige, manipulative oder t\xE4uschende Techniken",
     b: "Ausnutzung von Schutzbed\xFCrftigkeit",
     c: "soziale Bewertung (Social Scoring)",
-    d: "Risikobewertung von Straftaten ausschlie\xDFlich auf Grundlage von Profiling",
+    d: "Risikobewertung f\xFCr das Begehen von Straftaten ausschlie\xDFlich auf Grundlage von Profiling oder Pers\xF6nlichkeitsmerkmalen",
     e: "ungezieltes Auslesen von Gesichtsbildern",
-    f: "Emotionserkennung am Arbeitsplatz oder in Bildungseinrichtungen",
-    g: "biometrische Kategorisierung zur Ableitung sensibler Merkmale",
+    f: "Ableitung von Emotionen am Arbeitsplatz und in Bildungseinrichtungen (au\xDFer aus medizinischen oder Sicherheitsgr\xFCnden)",
+    g: "biometrische Kategorisierung zur Ableitung von Rasse, politischen Einstellungen, Gewerkschaftszugeh\xF6rigkeit, Religion oder Weltanschauung, Sexualleben oder sexueller Ausrichtung",
     h: "biometrische Echtzeit-Fernidentifizierung in \xF6ffentlich zug\xE4nglichen R\xE4umen zu Strafverfolgungszwecken"
   }
 };
@@ -9356,10 +9356,11 @@ var UI = {
     colPhrases: "Matched phrases",
     colSource: "Source",
     noTrigger: "No trigger found: the description matched no Article 5, Annex III, Article 50 or Article 53 / 55 phrase in the engine's lexicon. This is not a statement that no obligation applies.",
-    obligations: "Obligations the engine lists for this high-risk result",
+    obligations: "Obligations the engine lists for this possible high-risk result",
     caveats: "Read this before you rely on it",
-    disclaimer: "Informational tool \u2014 not legal advice. Output is grounded against Regulation (EU) 2024/1689, the EU AI Office Service Desk, and BSI / BfDI / Bitkom guidance. Use as a starting point; verify with your DPO and qualified counsel before acting on any classification.",
+    disclaimer: "Informational tool \u2014 not legal advice. Use as a starting point; verify with your DPO and qualified counsel before acting on any classification.",
     engineNote: "Deterministic keyword rules engine: it matches your wording against a curated lexicon. A description that avoids the lexicon's vocabulary can miss a trigger, and negated or unusual wording can be misread. The 98.8% on 71 test cases measures consistency with the curated lexicon, not real-world accuracy.",
+    notFinal: "A keyword match is not a final classification: Article 6(3) and Article 5 exceptions are not assessed.",
     localNote: "The engine ran inside this job. No text was sent anywhere.",
     links: "EUR-Lex links open the full Regulation (EU) 2024/1689; the article is named next to each link.",
     share: "Share this result",
@@ -9368,7 +9369,7 @@ var UI = {
     rules: "rules"
   },
   de: {
-    heading: "EU-KI-Verordnung: Pr\xFCfung",
+    heading: "EU-KI-Verordnung: Einordnung",
     result: "Risikoklasse",
     source: "Quelle",
     language: "Sprache",
@@ -9378,10 +9379,11 @@ var UI = {
     colPhrases: "Gefundene Begriffe",
     colSource: "Quelle",
     noTrigger: "Kein Ausl\xF6ser gefunden: Die Beschreibung enthielt keinen Begriff aus dem Lexikon der Engine zu Artikel 5, Anhang III, Artikel 50 oder Artikel 53 / 55. Das ist keine Aussage, dass keine Pflicht gilt.",
-    obligations: "Pflichten, die die Engine f\xFCr dieses Hochrisiko-Ergebnis auflistet",
+    obligations: "Pflichten, die die Engine f\xFCr dieses m\xF6gliche Hochrisiko-Ergebnis auflistet",
     caveats: "Bitte vor der Verwendung lesen",
-    disclaimer: "Informationswerkzeug \u2014 keine Rechtsberatung. Die Ausgabe ist gegen Verordnung (EU) 2024/1689, den EU-KI-Office-Service-Desk und BSI- / BfDI- / Bitkom-Leitlinien geerdet. Als Ausgangspunkt verwenden; vor jeder compliance-relevanten Entscheidung mit Ihrer DSB und qualifizierter juristischer Beratung verifizieren.",
+    disclaimer: "Informationswerkzeug \u2014 keine Rechtsberatung. Als Ausgangspunkt verwenden; vor jeder compliance-relevanten Entscheidung mit Ihrer DSB und qualifizierter juristischer Beratung verifizieren.",
     engineNote: "Deterministische Schl\xFCsselwort-Regel-Engine: Sie gleicht Ihre Formulierung mit einem kuratierten Lexikon ab. Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Ausl\xF6ser verfehlen, und verneinte oder ungew\xF6hnliche Formulierungen k\xF6nnen falsch gelesen werden. Die 98,8 % auf 71 Testf\xE4llen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt.",
+    notFinal: "Ein Stichwort-Treffer ist keine abschlie\xDFende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht gepr\xFCft.",
     localNote: "Die Engine lief in diesem Job. Es wurde kein Text versendet.",
     links: "EUR-Lex-Links \xF6ffnen die gesamte Verordnung (EU) 2024/1689; der Artikel steht jeweils daneben.",
     share: "Ergebnis teilen",
@@ -9471,7 +9473,12 @@ function obligations(r, citations, lang) {
   for (const key of ["article_10", "article_12", "article_13", "article_14", "article_15"]) {
     if (r[key] && r[key].applicable) rows.push({ label: citations[key][lang === "de" ? "label_de" : "label_en"], url: eurLex(citations, key, lang) });
   }
-  if (r.annex_iv_required) rows.push({ label: citations.annex_iv[lang === "de" ? "label_de" : "label_en"], url: eurLex(citations, "annex_iv", lang) });
+  if (r.annex_iv_required) {
+    rows.push({
+      label: lang === "de" ? "Artikel 11 / Anhang IV (technische Dokumentation)" : "Article 11 / Annex IV (technical documentation)",
+      url: eurLex(citations, "annex_iv", lang)
+    });
+  }
   return rows;
 }
 function badge(cls, lang) {
@@ -9510,6 +9517,7 @@ function summaryMarkdown({ r, cls, citations, lang, sourcePath, engine }) {
   }
   L.push(`### ${t.caveats}`, "");
   L.push(`- ${t.disclaimer}`);
+  L.push(`- ${t.notFinal}`);
   L.push(`- ${t.engineNote}`);
   L.push(`- ${t.localNote}`);
   L.push(`- ${t.links}`);

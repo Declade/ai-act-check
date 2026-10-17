@@ -8,6 +8,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { CLASS_TEXT } from "../src/text.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const bundle = join(root, "dist", "index.js");
@@ -78,9 +79,11 @@ test("cv screening card cites Annex III point 4 and lists the high-risk obligati
   const r = run({ files: { "ai-system.md": sample("cv-screening.md") } });
   assert.deepEqual(JSON.parse(r.outputs.triggered).annex_iii, ["Annex III point 4(a)"]);
   assert.match(r.summary, /Annex III point 4\(a\)/);
-  for (const a of ["Article 10", "Article 12", "Article 13", "Article 14", "Article 15", "Annex IV"]) assert.match(r.summary, new RegExp(a));
+  for (const a of ["Article 10", "Article 12", "Article 13", "Article 14", "Article 15", "Article 11 / Annex IV"]) assert.ok(r.summary.includes(a), a);
+  assert.match(r.summary, /Annex III area matched \(possible high-risk, Article 6\)/);
+  assert.match(r.summary, /A keyword match is not a final classification: Article 6\(3\) and Article 5 exceptions are not assessed\./);
   assert.match(r.summary, /eur-lex\.europa\.eu/);
-  assert.equal(JSON.parse(r.badge).message, "high-risk");
+  assert.equal(JSON.parse(r.badge).message, "possible high-risk");
 });
 
 test("support chatbot card names the Art. 50(1) path", () => {
@@ -108,7 +111,7 @@ test("badge message is the risk class only", () => {
     assert.equal(r.outputs["risk-class"], cls);
     const badge = JSON.parse(r.badge);
     assert.deepEqual(Object.keys(badge).sort(), ["color", "label", "message", "schemaVersion"]);
-    assert.equal(badge.message, { prohibited: "prohibited", gpai: "GPAI" }[cls]);
+    assert.equal(badge.message, { prohibited: "possible prohibited practice", gpai: "GPAI" }[cls]);
   }
 });
 
@@ -127,7 +130,9 @@ test("ai-act.yml fallback with a German block description and lang: de", () => {
   assert.match(r.summary, /Anhang III Nr\. 4/);
   assert.match(r.summary, /keine Rechtsberatung/);
   assert.match(r.summary, /https:\/\/lucairn\.eu\/de\/tools\/ai-act-classifier/);
-  assert.equal(JSON.parse(r.badge).message, "Hochrisiko");
+  assert.equal(JSON.parse(r.badge).message, "möglicherweise Hochrisiko");
+  assert.match(r.summary, /EU-KI-Verordnung: Einordnung/);
+  assert.match(r.summary, /Ein Stichwort-Treffer ist keine abschließende Einstufung/);
 });
 
 test("explicit path input and custom badge-path", () => {
@@ -179,6 +184,28 @@ test("bundle contains no network code", () => {
   for (const needle of ["node:http", "node:https", "node:net", "node:tls", "node:dns", "fetch(", "XMLHttpRequest", "WebSocket", "import(", "@anthropic-ai/sdk\")", "\"openai\")"]) {
     assert.equal(src.includes(needle), false, `dist/index.js contains ${needle}`);
   }
+});
+
+test("no class title or badge states high-risk / prohibited without 'possible' / 'möglich'", () => {
+  const strong = /high-risk|prohibited|hochrisiko|verboten/i;
+  const hedge = /possible|möglich/i;
+  for (const lang of ["en", "de"]) {
+    for (const [cls, t] of Object.entries(CLASS_TEXT[lang])) {
+      for (const text of [t.title, t.badge]) {
+        if (strong.test(text)) assert.match(text, hedge, `${lang}/${cls}: "${text}"`);
+      }
+    }
+  }
+  // And in real output: the high-risk card heading carries the hedge.
+  const r = run({ files: { "ai-system.md": sample("cv-screening.md") } });
+  for (const line of r.summary.split("\n").filter((l) => /^#+ |\*\*Risk class/.test(l))) {
+    if (strong.test(line)) assert.match(line, hedge, line);
+  }
+});
+
+test("removed unsourced 'grounded against' sentence stays out", () => {
+  const r = run({ files: { "ai-system.md": sample("support-chatbot.md") } });
+  assert.doesNotMatch(r.summary, /grounded against|geerdet/);
 });
 
 // Keep this last: it checks every output produced by the tests above.
