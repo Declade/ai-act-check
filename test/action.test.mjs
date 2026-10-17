@@ -3,59 +3,12 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { CLASS_TEXT } from "../src/text.mjs";
+import { allOutputs, bundle, root, run, sample } from "./helpers/run.mjs";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const bundle = join(root, "dist", "index.js");
-const noNetwork = join(root, "test", "helpers", "no-network.mjs");
 const expected = JSON.parse(readFileSync(join(root, "samples", "expected.json"), "utf8"));
-
-// Every run's outputs are collected here for the wording test at the end.
-const allOutputs = [];
-
-function parseOutputs(file) {
-  const out = {};
-  if (!existsSync(file)) return out;
-  const lines = readFileSync(file, "utf8").split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(/^([^<]+)<<(.+)$/);
-    if (!m) continue;
-    const buf = [];
-    for (i++; i < lines.length && lines[i] !== m[2]; i++) buf.push(lines[i]);
-    out[m[1]] = buf.join("\n");
-  }
-  return out;
-}
-
-/** Run the action in a fresh workspace. `files` = {relativePath: content}. */
-function run({ files = {}, inputs = {} } = {}) {
-  const ws = mkdtempSync(join(tmpdir(), "ai-act-check-"));
-  for (const [rel, content] of Object.entries(files)) {
-    mkdirSync(dirname(join(ws, rel)), { recursive: true });
-    writeFileSync(join(ws, rel), content);
-  }
-  const outFile = join(ws, ".gh-output");
-  const sumFile = join(ws, ".gh-summary");
-  const marker = join(ws, ".network-attempts");
-  const env = { PATH: process.env.PATH, GITHUB_WORKSPACE: ws, GITHUB_OUTPUT: outFile, GITHUB_STEP_SUMMARY: sumFile, NO_NETWORK_MARKER: marker };
-  for (const [k, v] of Object.entries(inputs)) env[`INPUT_${k.toUpperCase()}`] = v;
-  const p = spawnSync(process.execPath, ["--import", noNetwork, bundle], { cwd: ws, env, encoding: "utf8" });
-  const outputs = parseOutputs(outFile);
-  const summary = existsSync(sumFile) ? readFileSync(sumFile, "utf8") : "";
-  const badgeFile = outputs["badge-path"];
-  const badge = badgeFile && existsSync(badgeFile) ? readFileSync(badgeFile, "utf8") : "";
-  const network = existsSync(marker) ? readFileSync(marker, "utf8") : "";
-  const r = { ws, status: p.status, stdout: p.stdout, stderr: p.stderr, outputs, summary, badge, network };
-  allOutputs.push(r);
-  return r;
-}
-
-const sample = (name) => readFileSync(join(root, "samples", name), "utf8");
 
 for (const [name, cls] of Object.entries(expected)) {
   test(`sample ${name} -> ${cls}`, () => {
@@ -186,8 +139,8 @@ test("bundle contains no network code", () => {
   }
 });
 
-test("no class title or badge states high-risk / prohibited without 'possible' / 'möglich'", () => {
-  const strong = /high-risk|prohibited|hochrisiko|verboten/i;
+test("no class title or badge states a class or obligation without 'possible' / 'möglich'", () => {
+  const strong = /high-risk|prohibited|hochrisiko|verboten|transparen|obligation|pflicht/i;
   const hedge = /possible|möglich/i;
   for (const lang of ["en", "de"]) {
     for (const [cls, t] of Object.entries(CLASS_TEXT[lang])) {
@@ -196,10 +149,26 @@ test("no class title or badge states high-risk / prohibited without 'possible' /
       }
     }
   }
-  // And in real output: the high-risk card heading carries the hedge.
-  const r = run({ files: { "ai-system.md": sample("cv-screening.md") } });
-  for (const line of r.summary.split("\n").filter((l) => /^#+ |\*\*Risk class/.test(l))) {
-    if (strong.test(line)) assert.match(line, hedge, line);
+  // Exact hedged wording of the Article 50 / GPAI titles and the Article 50 badge.
+  assert.equal(CLASS_TEXT.en.transparency.title, "Possible transparency obligation (Article 50)");
+  assert.equal(CLASS_TEXT.de.transparency.title, "Mögliche Transparenzpflicht (Artikel 50)");
+  assert.equal(CLASS_TEXT.en.gpai.title, "Possible general-purpose AI model provider obligations (Article 53; Article 55 if systemic risk)");
+  assert.equal(
+    CLASS_TEXT.de.gpai.title,
+    "Mögliche Anbieterpflichten für KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53; Artikel 55 bei systemischem Risiko)",
+  );
+  assert.equal(CLASS_TEXT.en.transparency.badge, "possible transparency obligation");
+  assert.equal(CLASS_TEXT.de.transparency.badge, "mögliche Transparenzpflicht");
+  // And in real output: card headings and the class line carry the hedge (EN + DE,
+  // high-risk, transparency and GPAI cards).
+  const gpaiText = "We are the provider of a general-purpose AI model, a foundation model trained with large compute, offered to downstream developers.";
+  for (const [file, lang] of [["cv-screening.md", "en"], ["support-chatbot.md", "en"], ["support-chatbot.md", "de"], [null, "en"], [null, "de"]]) {
+    const r = run({ files: { "ai-system.md": file ? sample(file) : gpaiText }, inputs: { lang } });
+    const lines = r.summary.split("\n").filter((l) => /^#+ |\*\*(Risk class|Risikoklasse)/.test(l));
+    assert.ok(lines.length >= 2, r.summary);
+    for (const line of lines) {
+      if (strong.test(line)) assert.match(line, hedge, line);
+    }
   }
 });
 

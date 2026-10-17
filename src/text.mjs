@@ -23,15 +23,15 @@ export const CLASS_TEXT = {
   en: {
     prohibited: { badge: "possible prohibited practice", title: "Article 5 trigger matched (possible prohibited practice)" },
     "high-risk": { badge: "possible high-risk", title: "Annex III area matched (possible high-risk, Article 6)" },
-    transparency: { badge: "transparency", title: "Transparency obligation (Article 50)" },
-    gpai: { badge: "GPAI", title: "General-purpose AI model obligations (Articles 53 / 55)" },
+    transparency: { badge: "possible transparency obligation", title: "Possible transparency obligation (Article 50)" },
+    gpai: { badge: "GPAI", title: "Possible general-purpose AI model provider obligations (Article 53; Article 55 if systemic risk)" },
     "no-trigger": { badge: "no trigger found", title: "No trigger found" },
   },
   de: {
     prohibited: { badge: "mögliche verbotene Praktik", title: "Artikel-5-Auslöser erkannt (mögliche verbotene Praktik)" },
     "high-risk": { badge: "möglicherweise Hochrisiko", title: "Anhang-III-Bereich erkannt (möglicherweise Hochrisiko, Artikel 6)" },
-    transparency: { badge: "Transparenz", title: "Transparenzpflicht (Artikel 50)" },
-    gpai: { badge: "GPAI", title: "Pflichten für KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53 / 55)" },
+    transparency: { badge: "mögliche Transparenzpflicht", title: "Mögliche Transparenzpflicht (Artikel 50)" },
+    gpai: { badge: "GPAI", title: "Mögliche Anbieterpflichten für KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53; Artikel 55 bei systemischem Risiko)" },
     "no-trigger": { badge: "kein Auslöser gefunden", title: "Kein Auslöser gefunden" },
   },
 };
@@ -72,26 +72,31 @@ export const ART5_LETTER = {
 // Article 50 paragraphs, keyed by the engine's Article50TriggeredBy fields.
 export const ART50_PATH = {
   paragraph_1_interaction: {
+    paragraph: 1,
     ref: { en: "Art. 50(1)", de: "Art. 50 Abs. 1" },
     en: "AI system interacting directly with natural persons",
     de: "KI-System, das direkt mit natürlichen Personen interagiert",
   },
   paragraph_2_synthetic_content: {
+    paragraph: 2,
     ref: { en: "Art. 50(2)", de: "Art. 50 Abs. 2" },
     en: "synthetic audio, image, video or text content",
     de: "synthetische Audio-, Bild-, Video- oder Textinhalte",
   },
   paragraph_3_emotion_or_biometric_categorisation: {
+    paragraph: 3,
     ref: { en: "Art. 50(3)", de: "Art. 50 Abs. 3" },
     en: "emotion recognition or biometric categorisation system",
     de: "Emotionserkennungssystem oder System zur biometrischen Kategorisierung",
   },
   paragraph_4_deepfake: {
+    paragraph: 4,
     ref: { en: "Art. 50(4)", de: "Art. 50 Abs. 4" },
     en: "deep fake",
     de: "Deepfake",
   },
   paragraph_4_public_interest_text: {
+    paragraph: 4,
     ref: { en: "Art. 50(4)", de: "Art. 50 Abs. 4" },
     en: "text published to inform the public on matters of public interest",
     de: "Text, der veröffentlicht wird, um die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren",
@@ -118,7 +123,10 @@ export const UI = {
     engineNote:
       "Deterministic keyword rules engine: it matches your wording against a curated lexicon. A description that avoids the lexicon's vocabulary can miss a trigger, and negated or unusual wording can be misread. The 98.8% on 71 test cases measures consistency with the curated lexicon, not real-world accuracy.",
     notFinal: "A keyword match is not a final classification: Article 6(3) and Article 5 exceptions are not assessed.",
-    localNote: "The engine ran inside this job. No text was sent anywhere.",
+    localNote:
+      "The classification itself makes no network requests and reads no tokens. Its results, the file path and the matched phrases appear in the job summary and logs, which GitHub stores as usual.",
+    negNote: "Found, but the text appears to deny it — please check",
+    negCue: "negation",
     links: "EUR-Lex links open the full Regulation (EU) 2024/1689; the article is named next to each link.",
     share: "Share this result",
     shareText: "run the same check in the browser on lucairn.eu",
@@ -144,7 +152,10 @@ export const UI = {
     engineNote:
       "Deterministische Schlüsselwort-Regel-Engine: Sie gleicht Ihre Formulierung mit einem kuratierten Lexikon ab. Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Auslöser verfehlen, und verneinte oder ungewöhnliche Formulierungen können falsch gelesen werden. Die 98,8 % auf 71 Testfällen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt.",
     notFinal: "Ein Stichwort-Treffer ist keine abschließende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht geprüft.",
-    localNote: "Die Engine lief in diesem Job. Es wurde kein Text versendet.",
+    localNote:
+      "Die Einordnung selbst stellt keine Netzwerkanfragen und liest keine Tokens. Ergebnis, Dateipfad und gefundene Phrasen erscheinen in der Job-Zusammenfassung und im Log, die GitHub wie üblich speichert.",
+    negNote: "Gefunden, aber der Text scheint es zu verneinen — bitte prüfen",
+    negCue: "Verneinung",
     links: "EUR-Lex-Links öffnen die gesamte Verordnung (EU) 2024/1689; der Artikel steht jeweils daneben.",
     share: "Ergebnis teilen",
     shareText: "dieselbe Prüfung im Browser auf lucairn.eu ausführen",

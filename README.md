@@ -39,23 +39,23 @@ description: |
 
 | Input | Default | What it does |
 |---|---|---|
-| `path` | `ai-system.md` | The description file: Markdown, or YAML with a top-level `description:` field. When left at the default and `ai-system.md` is missing, `ai-act.yml` (then `ai-act.yaml`) is used. HTML comments in Markdown are ignored. Limit 64 KiB. |
+| `path` | `ai-system.md` | The description file: Markdown, or YAML with a top-level `description:` field. When left at the default and `ai-system.md` is missing, `ai-act.yml` (then `ai-act.yaml`) is used. HTML comments in Markdown are ignored. Limit 64 KiB. Must be a regular file inside the workspace, given as a relative path; symlinks are refused. |
 | `lang` | `en` | `en` or `de`. The engine matches against that language's lexicon only. If the text looks like the other language, the action prints a warning. |
 | `fail-on` | `none` | `none`, `prohibited`, or `high-risk`. Fails the step when that class is found. `high-risk` also fails on `prohibited`. |
-| `badge-path` | `.github/ai-act-badge.json` | Where to write the badge JSON, relative to the workspace. Set to `''` to skip. The action never commits it. |
+| `badge-path` | `.github/ai-act-badge.json` | Where to write the badge JSON, relative to the workspace. Set to `''` to skip. The action never commits it. The path must stay inside the workspace; symlinks, `.git` paths and an existing file that is not a badge written by this action are refused. |
 
 ## Outputs
 
 | Output | Example |
 |---|---|
-| `risk-class` | `prohibited`, `high-risk`, `transparency`, `gpai`, or `no-trigger` (machine values; `prohibited` and `high-risk` mean a keyword match, shown to people as "possible …") |
+| `risk-class` | `prohibited`, `high-risk`, `transparency`, `gpai`, or `no-trigger` (machine values; `prohibited`, `high-risk` and `transparency` mean a keyword match, shown to people as "possible …") |
 | `triggered` | `{"article_5":[],"annex_iii":["Annex III point 4(a)"],"article_50":[],"gpai":[]}` |
 | `badge-path` | absolute path of the badge JSON, empty when skipped |
-| `engine-version` | the bundled engine version, e.g. `0.3.1` |
+| `engine-version` | the bundled engine version, e.g. `0.4.0` |
 
 When more than one class fires, this tool reports Article 5 first, then Annex III, then Article 50, then Articles 53 / 55. `triggered` lists everything that fired.
 
-The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, the obligations the engine lists for a possible high-risk result (Articles 10, 12–15, Article 11 / Annex IV), the caveats below, a "Share this result" link to the browser tool, and the engine version.
+The summary card shows the class, each Article 5 letter / Annex III point / Article 50 paragraph that fired with the matched phrases and an EUR-Lex link, a note under a finding when the text appears to deny it ("Found, but the text appears to deny it — please check"; the class does not change), the obligations the engine lists for a possible high-risk result (Articles 10, 12–15, Article 11 / Annex IV), the caveats below, a "Share this result" link to the browser tool, and the engine version.
 
 ```yaml
       - id: aiact
@@ -73,7 +73,7 @@ The action writes a [shields.io endpoint](https://shields.io/badges/endpoint-bad
 { "schemaVersion": 1, "label": "EU AI Act", "message": "possible high-risk", "color": "orange" }
 ```
 
-The message is the risk class only: `possible prohibited practice`, `possible high-risk`, `transparency`, `GPAI`, or `no trigger found` (grey).
+The message is the risk class only: `possible prohibited practice`, `possible high-risk`, `possible transparency obligation`, `GPAI`, or `no trigger found` (grey).
 
 shields.io needs to fetch that file from a public URL, so you publish it yourself. The simplest way is to commit it on pushes to your default branch:
 
@@ -115,7 +115,8 @@ For a private repo, write the file to a public gist or another public location i
 - **A keyword match is not a final classification:** Article 6(3) and Article 5 exceptions are not assessed. That is why the card and badge say "possible high-risk" and "possible prohibited practice".
 - **"No trigger found" is not a clean bill of health.** It means no lexicon phrase matched. It never says that no obligation applies, and this action never calls a system "compliant" or "minimal risk".
 - **EUR-Lex links** open the full regulation; the article is named next to each link.
-- **No data leaves the runner.** The engine runs inside the job. The action only uses the engine's deterministic path; the engine's optional LLM mode is left out of the bundle, and `dist/index.js` contains no network code. The test suite runs the bundle with every network call blocked and checks that none was attempted.
+- **The classification itself makes no network requests and reads no tokens.** Its results, the file path and the matched phrases appear in the job summary and logs, which GitHub stores as usual. The action only uses the engine's deterministic path; the engine's optional LLM mode is left out of the bundle, and `dist/index.js` contains no network code. The bundle is run with the main Node network APIs blocked in tests, and the tests check that none was attempted.
+- **Negated wording is flagged, not hidden.** When the text appears to deny a matched phrase ("does not use social scoring"), the card says so under that finding; the class stays the same, so a real trigger is never dropped.
 
 ## How it is built
 
@@ -135,9 +136,9 @@ Legen Sie eine kurze Beschreibung Ihres KI-Systems als `ai-system.md` (oder `ai-
           lang: de
 ```
 
-Die Action ordnet die Beschreibung der KI-Verordnung (EU) 2024/1689 zu (Artikel 5, Anhang III, Artikel 50, Artikel 53 / 55), schreibt eine Ergebniskarte in den Job, setzt die Ausgaben `risk-class` und `triggered` und schreibt eine Badge-Datei. Die Engine läuft im Job; es wird kein Text versendet.
+Die Action ordnet die Beschreibung der KI-Verordnung (EU) 2024/1689 zu (Artikel 5, Anhang III, Artikel 50, Artikel 53 / 55), schreibt eine Ergebniskarte in den Job, setzt die Ausgaben `risk-class` und `triggered` und schreibt eine Badge-Datei. Die Einordnung selbst stellt keine Netzwerkanfragen und liest keine Tokens. Ergebnis, Dateipfad und gefundene Phrasen erscheinen in der Job-Zusammenfassung und im Log, die GitHub wie üblich speichert.
 
-**Informationswerkzeug — keine Rechtsberatung.** Deterministische Schlüsselwort-Regel-Engine: Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Auslöser verfehlen. Die 98,8 % auf 71 Testfällen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt. Ein Stichwort-Treffer ist keine abschließende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht geprüft. „Kein Auslöser gefunden“ heißt nur, dass kein Begriff aus dem Lexikon gefunden wurde.
+**Informationswerkzeug — keine Rechtsberatung.** Deterministische Schlüsselwort-Regel-Engine: Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Auslöser verfehlen. Die 98,8 % auf 71 Testfällen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt. Ein Stichwort-Treffer ist keine abschließende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht geprüft. „Kein Auslöser gefunden“ heißt nur, dass kein Begriff aus dem Lexikon gefunden wurde. Scheint der Text einen Treffer zu verneinen, steht unter dem Treffer „Gefunden, aber der Text scheint es zu verneinen — bitte prüfen“; die Einordnung ändert sich dadurch nicht.
 
 Im Browser ausprobieren: [lucairn.eu/de/tools/ai-act-classifier](https://lucairn.eu/de/tools/ai-act-classifier).
 

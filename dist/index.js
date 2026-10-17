@@ -387,8 +387,8 @@ var require_directives = __commonJS({
         if (prefix) {
           try {
             return prefix + decodeURIComponent(suffix);
-          } catch (error) {
-            onError(String(error));
+          } catch (error2) {
+            onError(String(error2));
             return null;
           }
         }
@@ -490,9 +490,9 @@ var require_anchors = __commonJS({
             if (typeof ref === "object" && ref.anchor && (identity.isScalar(ref.node) || identity.isCollection(ref.node))) {
               ref.node.anchor = ref.anchor;
             } else {
-              const error = new Error("Failed to resolve repeated object (this should not happen)");
-              error.source = source;
-              throw error;
+              const error2 = new Error("Failed to resolve repeated object (this should not happen)");
+              error2.source = source;
+              throw error2;
             }
           }
         },
@@ -1695,12 +1695,12 @@ var require_log = __commonJS({
       if (logLevel === "debug")
         console.log(...messages);
     }
-    function warn(logLevel, warning) {
+    function warn(logLevel, warning2) {
       if (logLevel === "debug" || logLevel === "warn") {
         if (typeof node_process.emitWarning === "function")
-          node_process.emitWarning(warning);
+          node_process.emitWarning(warning2);
         else
-          console.warn(warning);
+          console.warn(warning2);
       }
     }
     exports.debug = debug;
@@ -3742,12 +3742,12 @@ var require_errors = __commonJS({
         super("YAMLWarning", pos, code, message);
       }
     };
-    var prettifyError = (src, lc) => (error) => {
-      if (error.pos[0] === -1)
+    var prettifyError = (src, lc) => (error2) => {
+      if (error2.pos[0] === -1)
         return;
-      error.linePos = error.pos.map((pos) => lc.linePos(pos));
-      const { line, col } = error.linePos[0];
-      error.message += ` at line ${line}, column ${col}`;
+      error2.linePos = error2.pos.map((pos) => lc.linePos(pos));
+      const { line, col } = error2.linePos[0];
+      error2.message += ` at line ${line}, column ${col}`;
       let ci = col - 1;
       let lineStr = src.substring(lc.lineStarts[line - 1], lc.lineStarts[line]).replace(/[\n\r]+$/, "");
       if (ci >= 60 && lineStr.length > 80) {
@@ -3765,12 +3765,12 @@ var require_errors = __commonJS({
       }
       if (/[^ ]/.test(lineStr)) {
         let count = 1;
-        const end = error.linePos[1];
+        const end = error2.linePos[1];
         if (end?.line === line && end.col > col) {
           count = Math.max(1, Math.min(end.col - col, 80 - ci));
         }
         const pointer = " ".repeat(ci) + "^".repeat(count);
-        error.message += `:
+        error2.message += `:
 
 ${lineStr}
 ${pointer}
@@ -4013,10 +4013,10 @@ var require_resolve_block_map = __commonJS({
       let offset = bm.offset;
       let commentEnd = null;
       for (const collItem of bm.items) {
-        const { start, key, sep, value } = collItem;
+        const { start, key, sep: sep2, value } = collItem;
         const keyProps = resolveProps.resolveProps(start, {
           indicator: "explicit-key-ind",
-          next: key ?? sep?.[0],
+          next: key ?? sep2?.[0],
           offset,
           onError,
           parentIndent: bm.indent,
@@ -4030,7 +4030,7 @@ var require_resolve_block_map = __commonJS({
             else if ("indent" in key && key.indent !== bm.indent)
               onError(offset, "BAD_INDENT", startColMsg);
           }
-          if (!keyProps.anchor && !keyProps.tag && !sep) {
+          if (!keyProps.anchor && !keyProps.tag && !sep2) {
             commentEnd = keyProps.end;
             if (keyProps.comment) {
               if (map.comment)
@@ -4054,7 +4054,7 @@ var require_resolve_block_map = __commonJS({
         ctx.atKey = false;
         if (utilMapIncludes.mapIncludes(ctx, map.items, keyNode))
           onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
-        const valueProps = resolveProps.resolveProps(sep ?? [], {
+        const valueProps = resolveProps.resolveProps(sep2 ?? [], {
           indicator: "map-value-ind",
           next: value,
           offset: keyNode.range[2],
@@ -4070,7 +4070,7 @@ var require_resolve_block_map = __commonJS({
             if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
               onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep, null, valueProps, onError);
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep2, null, valueProps, onError);
           if (ctx.schema.compat)
             utilFlowIndentCheck.flowIndentCheck(bm.indent, value, onError);
           offset = valueNode.range[2];
@@ -4161,7 +4161,7 @@ var require_resolve_end = __commonJS({
       let comment = "";
       if (end) {
         let hasSpace = false;
-        let sep = "";
+        let sep2 = "";
         for (const token of end) {
           const { source, type } = token;
           switch (type) {
@@ -4175,13 +4175,13 @@ var require_resolve_end = __commonJS({
               if (!comment)
                 comment = cb;
               else
-                comment += sep + cb;
-              sep = "";
+                comment += sep2 + cb;
+              sep2 = "";
               break;
             }
             case "newline":
               if (comment)
-                sep += source;
+                sep2 += source;
               hasSpace = true;
               break;
             default:
@@ -4224,18 +4224,18 @@ var require_resolve_flow_collection = __commonJS({
       let offset = fc.offset + fc.start.source.length;
       for (let i = 0; i < fc.items.length; ++i) {
         const collItem = fc.items[i];
-        const { start, key, sep, value } = collItem;
+        const { start, key, sep: sep2, value } = collItem;
         const props = resolveProps.resolveProps(start, {
           flow: fcName,
           indicator: "explicit-key-ind",
-          next: key ?? sep?.[0],
+          next: key ?? sep2?.[0],
           offset,
           onError,
           parentIndent: fc.indent,
           startOnNewline: false
         });
         if (!props.found) {
-          if (!props.anchor && !props.tag && !sep && !value) {
+          if (!props.anchor && !props.tag && !sep2 && !value) {
             if (i === 0 && props.comma)
               onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
             else if (i < fc.items.length - 1)
@@ -4289,8 +4289,8 @@ var require_resolve_flow_collection = __commonJS({
             }
           }
         }
-        if (!isMap && !sep && !props.found) {
-          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep, null, props, onError);
+        if (!isMap && !sep2 && !props.found) {
+          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep2, null, props, onError);
           coll.items.push(valueNode);
           offset = valueNode.range[2];
           if (isBlock(value))
@@ -4302,7 +4302,7 @@ var require_resolve_flow_collection = __commonJS({
           if (isBlock(key))
             onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
           ctx.atKey = false;
-          const valueProps = resolveProps.resolveProps(sep ?? [], {
+          const valueProps = resolveProps.resolveProps(sep2 ?? [], {
             flow: fcName,
             indicator: "map-value-ind",
             next: value,
@@ -4313,8 +4313,8 @@ var require_resolve_flow_collection = __commonJS({
           });
           if (valueProps.found) {
             if (!isMap && !props.found && ctx.options.strict) {
-              if (sep)
-                for (const st of sep) {
+              if (sep2)
+                for (const st of sep2) {
                   if (st === valueProps.found)
                     break;
                   if (st.type === "newline") {
@@ -4331,7 +4331,7 @@ var require_resolve_flow_collection = __commonJS({
             else
               onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep, null, valueProps, onError) : null;
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep2, null, valueProps, onError) : null;
           if (valueNode) {
             if (isBlock(value))
               onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
@@ -4511,7 +4511,7 @@ var require_resolve_block_scalar = __commonJS({
           chompStart = i + 1;
       }
       let value = "";
-      let sep = "";
+      let sep2 = "";
       let prevMoreIndented = false;
       for (let i = 0; i < contentStart; ++i)
         value += lines[i][0].slice(trimIndent) + "\n";
@@ -4528,24 +4528,24 @@ var require_resolve_block_scalar = __commonJS({
           indent = "";
         }
         if (type === Scalar.Scalar.BLOCK_LITERAL) {
-          value += sep + indent.slice(trimIndent) + content;
-          sep = "\n";
+          value += sep2 + indent.slice(trimIndent) + content;
+          sep2 = "\n";
         } else if (indent.length > trimIndent || content[0] === "	") {
-          if (sep === " ")
-            sep = "\n";
-          else if (!prevMoreIndented && sep === "\n")
-            sep = "\n\n";
-          value += sep + indent.slice(trimIndent) + content;
-          sep = "\n";
+          if (sep2 === " ")
+            sep2 = "\n";
+          else if (!prevMoreIndented && sep2 === "\n")
+            sep2 = "\n\n";
+          value += sep2 + indent.slice(trimIndent) + content;
+          sep2 = "\n";
           prevMoreIndented = true;
         } else if (content === "") {
-          if (sep === "\n")
+          if (sep2 === "\n")
             value += "\n";
           else
-            sep = "\n";
+            sep2 = "\n";
         } else {
-          value += sep + content;
-          sep = " ";
+          value += sep2 + content;
+          sep2 = " ";
           prevMoreIndented = false;
         }
       }
@@ -4573,7 +4573,7 @@ var require_resolve_block_scalar = __commonJS({
       const mode = source[0];
       let indent = 0;
       let chomp = "";
-      let error = -1;
+      let error2 = -1;
       for (let i = 1; i < source.length; ++i) {
         const ch = source[i];
         if (!chomp && (ch === "-" || ch === "+"))
@@ -4582,12 +4582,12 @@ var require_resolve_block_scalar = __commonJS({
           const n = Number(ch);
           if (!indent && n)
             indent = n;
-          else if (error === -1)
-            error = offset + i;
+          else if (error2 === -1)
+            error2 = offset + i;
         }
       }
-      if (error !== -1)
-        onError(error, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
+      if (error2 !== -1)
+        onError(error2, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
       let hasSpace = false;
       let comment = "";
       let length = source.length;
@@ -4728,25 +4728,25 @@ var require_resolve_flow_scalar = __commonJS({
         trimBoth = /^[ \t]+|[ \t]+$/g;
       }
       let res = match[1].replace(trimEnd, "");
-      let sep = " ";
+      let sep2 = " ";
       let pos = line.lastIndex;
       while (match = line.exec(source)) {
         const lm = match[1].replace(trimBoth, "");
         if (lm === "") {
-          if (sep === "\n")
-            res += sep;
+          if (sep2 === "\n")
+            res += sep2;
           else
-            sep = "\n";
+            sep2 = "\n";
         } else {
-          res += sep + lm;
-          sep = " ";
+          res += sep2 + lm;
+          sep2 = " ";
         }
         pos = line.lastIndex;
       }
       const last = /[ \t]*(.*)/sy;
       last.lastIndex = pos;
       match = last.exec(source);
-      return res + sep + (match?.[1] ?? "");
+      return res + sep2 + (match?.[1] ?? "");
     }
     function doubleQuotedValue(source, onError) {
       let res = "";
@@ -4883,8 +4883,8 @@ var require_compose_scalar = __commonJS({
       try {
         const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx.options);
         scalar = identity.isScalar(res) ? res : new Scalar.Scalar(res);
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
+      } catch (error2) {
+        const msg = error2 instanceof Error ? error2.message : String(error2);
         onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg);
         scalar = new Scalar.Scalar(value);
       }
@@ -5007,8 +5007,8 @@ var require_compose_node = __commonJS({
             node = composeCollection.composeCollection(CN, ctx, token, props, onError);
             if (anchor)
               node.anchor = anchor.source.substring(1);
-          } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
+          } catch (error2) {
+            const message = error2 instanceof Error ? error2.message : String(error2);
             onError(token, "RESOURCE_EXHAUSTION", message);
           }
           break;
@@ -5170,9 +5170,9 @@ var require_composer = __commonJS({
         this.prelude = [];
         this.errors = [];
         this.warnings = [];
-        this.onError = (source, code, message, warning) => {
+        this.onError = (source, code, message, warning2) => {
           const pos = getErrorPos(source);
-          if (warning)
+          if (warning2)
             this.warnings.push(new errors.YAMLWarning(pos, code, message));
           else
             this.errors.push(new errors.YAMLParseError(pos, code, message));
@@ -5245,10 +5245,10 @@ ${cb}` : comment;
           console.dir(token, { depth: null });
         switch (token.type) {
           case "directive":
-            this.directives.add(token.source, (offset, message, warning) => {
+            this.directives.add(token.source, (offset, message, warning2) => {
               const pos = getErrorPos(token);
               pos[0] += offset;
-              this.onError(pos, "BAD_DIRECTIVE", message, warning);
+              this.onError(pos, "BAD_DIRECTIVE", message, warning2);
             });
             this.prelude.push(token.source);
             this.atDirectives = true;
@@ -5273,11 +5273,11 @@ ${cb}` : comment;
             break;
           case "error": {
             const msg = token.source ? `${token.message}: ${JSON.stringify(token.source)}` : token.message;
-            const error = new errors.YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg);
+            const error2 = new errors.YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg);
             if (this.atDirectives || !this.doc)
-              this.errors.push(error);
+              this.errors.push(error2);
             else
-              this.doc.errors.push(error);
+              this.doc.errors.push(error2);
             break;
           }
           case "doc-end": {
@@ -5556,14 +5556,14 @@ var require_cst_stringify = __commonJS({
         }
       }
     }
-    function stringifyItem({ start, key, sep, value }) {
+    function stringifyItem({ start, key, sep: sep2, value }) {
       let res = "";
       for (const st of start)
         res += st.source;
       if (key)
         res += stringifyToken(key);
-      if (sep)
-        for (const st of sep)
+      if (sep2)
+        for (const st of sep2)
           res += st.source;
       if (value)
         res += stringifyToken(value);
@@ -6590,8 +6590,8 @@ var require_parser = __commonJS({
       peek(n) {
         return this.stack[this.stack.length - n];
       }
-      *pop(error) {
-        const token = error ?? this.stack.pop();
+      *pop(error2) {
+        const token = error2 ?? this.stack.pop();
         if (!token) {
           const message = "Tried to pop an empty stack";
           yield { type: "error", offset: this.offset, source: "", message };
@@ -6730,18 +6730,18 @@ var require_parser = __commonJS({
         if (this.type === "map-value-ind") {
           const prev = getPrevProps(this.peek(2));
           const start = getFirstKeyStartProps(prev);
-          let sep;
+          let sep2;
           if (scalar.end) {
-            sep = scalar.end;
-            sep.push(this.sourceToken);
+            sep2 = scalar.end;
+            sep2.push(this.sourceToken);
             delete scalar.end;
           } else
-            sep = [this.sourceToken];
+            sep2 = [this.sourceToken];
           const map = {
             type: "block-map",
             offset: scalar.offset,
             indent: scalar.indent,
-            items: [{ start, key: scalar, sep }]
+            items: [{ start, key: scalar, sep: sep2 }]
           };
           this.onKeyLine = true;
           this.stack[this.stack.length - 1] = map;
@@ -6894,15 +6894,15 @@ var require_parser = __commonJS({
                 } else if (isFlowToken(it.key) && !includesToken(it.sep, "newline")) {
                   const start2 = getFirstKeyStartProps(it.start);
                   const key = it.key;
-                  const sep = it.sep;
-                  sep.push(this.sourceToken);
+                  const sep2 = it.sep;
+                  sep2.push(this.sourceToken);
                   delete it.key;
                   delete it.sep;
                   this.stack.push({
                     type: "block-map",
                     offset: this.offset,
                     indent: this.indent,
-                    items: [{ start: start2, key, sep }]
+                    items: [{ start: start2, key, sep: sep2 }]
                   });
                 } else if (start.length > 0) {
                   it.sep = it.sep.concat(start, this.sourceToken);
@@ -7096,13 +7096,13 @@ var require_parser = __commonJS({
             const prev = getPrevProps(parent);
             const start = getFirstKeyStartProps(prev);
             fixFlowSeqItems(fc);
-            const sep = fc.end.splice(1, fc.end.length);
-            sep.push(this.sourceToken);
+            const sep2 = fc.end.splice(1, fc.end.length);
+            sep2.push(this.sourceToken);
             const map = {
               type: "block-map",
               offset: fc.offset,
               indent: fc.indent,
-              items: [{ start, key: fc, sep }]
+              items: [{ start, key: fc, sep: sep2 }]
             };
             this.onKeyLine = true;
             this.stack[this.stack.length - 1] = map;
@@ -7261,7 +7261,7 @@ var require_public_api = __commonJS({
         return docs;
       return Object.assign([], { empty: true }, composer$1.streamInfo());
     }
-    function parseDocument(source, options = {}) {
+    function parseDocument2(source, options = {}) {
       const { lineCounter: lineCounter2, prettyErrors } = parseOptions(options);
       const parser$1 = new parser.Parser(lineCounter2?.addNewLine);
       const composer$1 = new composer.Composer(options);
@@ -7287,10 +7287,10 @@ var require_public_api = __commonJS({
       } else if (options === void 0 && reviver && typeof reviver === "object") {
         options = reviver;
       }
-      const doc = parseDocument(src, options);
+      const doc = parseDocument2(src, options);
       if (!doc)
         return null;
-      doc.warnings.forEach((warning) => log.warn(doc.options.logLevel, warning));
+      doc.warnings.forEach((warning2) => log.warn(doc.options.logLevel, warning2));
       if (doc.errors.length > 0) {
         if (doc.options.logLevel !== "silent")
           throw doc.errors[0];
@@ -7323,7 +7323,7 @@ var require_public_api = __commonJS({
     }
     exports.parse = parse;
     exports.parseAllDocuments = parseAllDocuments;
-    exports.parseDocument = parseDocument;
+    exports.parseDocument = parseDocument2;
     exports.stringify = stringify;
   }
 });
@@ -7598,59 +7598,237 @@ var init_shared = __esm({
 });
 
 // src/main.mjs
-import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
-import { dirname as dirname8, resolve as resolve2 } from "node:path";
-import { randomUUID } from "node:crypto";
+import { appendFileSync } from "node:fs";
+import { resolve as resolve2 } from "node:path";
+import { randomUUID as randomUUID2 } from "node:crypto";
 
 // src/description.mjs
 var import_yaml = __toESM(require_dist(), 1);
-import { existsSync, readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+
+// src/log.mjs
+var SafeError = class extends Error {
+};
+function escapeData(s) {
+  return String(s).replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+}
+var CONTROL = /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g;
+function displayText(s) {
+  return escapeData(s).replace(CONTROL, "\uFFFD");
+}
+function oneLine(s) {
+  return String(s).replace(/\r/g, "%0D").replace(/\n/g, "%0A").replace(CONTROL, "\uFFFD");
+}
+function info(line) {
+  console.log(oneLine(line).replace(/^\s*::/, ": :"));
+}
+function warning(message) {
+  console.log(`::warning::${oneLine(message)}`);
+}
+function error(message) {
+  console.log(`::error::${oneLine(message)}`);
+}
+
+// src/safe-fs.mjs
+import {
+  closeSync,
+  constants,
+  fstatSync,
+  lstatSync,
+  mkdirSync,
+  openSync,
+  readSync,
+  realpathSync,
+  renameSync,
+  unlinkSync,
+  writeSync
+} from "node:fs";
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { randomUUID } from "node:crypto";
+var O_NOFOLLOW = constants.O_NOFOLLOW ?? 0;
+var O_NONBLOCK = constants.O_NONBLOCK ?? 0;
+var UnsafePathError = class extends SafeError {
+};
+var q = (p) => `"${displayText(p)}"`;
+function lstatOrNull(p) {
+  try {
+    return lstatSync(p);
+  } catch (e) {
+    if (e && e.code === "ENOENT") return null;
+    throw e;
+  }
+}
+function workspaceRoot(cwd) {
+  return realpathSync(cwd);
+}
+function containedParts(root, userPath, what) {
+  if (typeof userPath !== "string" || userPath === "") throw new UnsafePathError(`Input "${what}" is empty.`);
+  if (/[\u0000-\u001f\u007f-\u009f]/.test(userPath)) {
+    throw new UnsafePathError(`Input "${what}" contains control characters; use a plain relative path.`);
+  }
+  if (isAbsolute(userPath) || /^[\\/]/.test(userPath) || /^[A-Za-z]:/.test(userPath)) {
+    throw new UnsafePathError(`Input "${what}" must be a path relative to the workspace; got the absolute path ${q(userPath)}.`);
+  }
+  const abs = resolve(root, userPath);
+  const rel = relative(root, abs);
+  if (rel === "" || rel === ".." || rel.startsWith(".." + sep) || isAbsolute(rel)) {
+    throw new UnsafePathError(`Input "${what}" ${q(userPath)} points outside the workspace.`);
+  }
+  const parts = rel.split(sep);
+  if (parts.some((p) => p.toLowerCase() === ".git")) {
+    throw new UnsafePathError(`Input "${what}" ${q(userPath)} points into a .git directory.`);
+  }
+  return parts;
+}
+function checkParents(root, parts, userPath, what, create) {
+  let cur = root;
+  for (const part of parts.slice(0, -1)) {
+    cur = join(cur, part);
+    let st = lstatOrNull(cur);
+    if (!st && create) {
+      try {
+        mkdirSync(cur, { mode: 493 });
+      } catch (e) {
+        if (!e || e.code !== "EEXIST") throw e;
+      }
+      st = lstatOrNull(cur);
+    }
+    if (!st) return false;
+    if (st.isSymbolicLink()) {
+      throw new UnsafePathError(`Input "${what}" ${q(userPath)}: a directory on the way is a symlink; the action does not follow symlinks.`);
+    }
+    if (!st.isDirectory()) {
+      throw new UnsafePathError(`Input "${what}" ${q(userPath)}: a parent on the way is not a directory.`);
+    }
+  }
+  return true;
+}
+function locateForRead(root, userPath, what) {
+  const parts = containedParts(root, userPath, what);
+  if (!checkParents(root, parts, userPath, what, false)) return null;
+  const abs = join(root, ...parts);
+  const st = lstatOrNull(abs);
+  if (!st) return null;
+  if (st.isSymbolicLink()) throw new UnsafePathError(`${q(userPath)} is a symlink; the action does not follow symlinks.`);
+  if (!st.isFile()) throw new UnsafePathError(`${q(userPath)} is not a regular file.`);
+  return abs;
+}
+function readRegularFile(abs, limit, label) {
+  let fd;
+  try {
+    fd = openSync(abs, constants.O_RDONLY | O_NOFOLLOW | O_NONBLOCK);
+  } catch (e) {
+    if (e && (e.code === "ELOOP" || e.code === "EMLINK")) throw new UnsafePathError(`${q(label)} is a symlink; the action does not follow symlinks.`);
+    throw new UnsafePathError(`${q(label)} could not be opened (${e && e.code ? e.code : "error"}).`);
+  }
+  try {
+    if (!fstatSync(fd).isFile()) throw new UnsafePathError(`${q(label)} is not a regular file.`);
+    const buf = Buffer.alloc(limit + 1);
+    let n = 0;
+    while (n < buf.length) {
+      const got = readSync(fd, buf, n, buf.length - n, null);
+      if (got === 0) break;
+      n += got;
+    }
+    if (n > limit) throw new UnsafePathError(`${q(label)} is larger than ${limit} bytes, the limit.`);
+    return buf.subarray(0, n);
+  } finally {
+    closeSync(fd);
+  }
+}
+function writeContained(root, userPath, what, content, { mayOverwrite, maxExisting = 4096 } = {}) {
+  const parts = containedParts(root, userPath, what);
+  checkParents(root, parts, userPath, what, true);
+  const abs = join(root, ...parts);
+  const st = lstatOrNull(abs);
+  if (st) {
+    if (st.isSymbolicLink()) throw new UnsafePathError(`Input "${what}" ${q(userPath)} is a symlink; the action does not follow symlinks.`);
+    if (!st.isFile()) throw new UnsafePathError(`Input "${what}" ${q(userPath)} exists and is not a regular file.`);
+    let existing;
+    try {
+      existing = readRegularFile(abs, maxExisting, userPath);
+    } catch {
+      existing = null;
+    }
+    if (!existing || !mayOverwrite || !mayOverwrite(existing)) {
+      throw new UnsafePathError(`Input "${what}" ${q(userPath)} already exists and is not a badge file written by this action; refusing to overwrite it.`);
+    }
+  }
+  const tmp = join(dirname(abs), `.${basename(abs)}.${randomUUID()}.tmp`);
+  const fd = openSync(tmp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | O_NOFOLLOW, 420);
+  let renamed = false;
+  try {
+    const data = Buffer.from(content, "utf8");
+    let off = 0;
+    while (off < data.length) off += writeSync(fd, data, off, data.length - off);
+    closeSync(fd);
+    renameSync(tmp, abs);
+    renamed = true;
+  } finally {
+    if (!renamed) {
+      try {
+        closeSync(fd);
+      } catch {
+      }
+      try {
+        unlinkSync(tmp);
+      } catch {
+      }
+    }
+  }
+  return abs;
+}
+
+// src/description.mjs
 var DEFAULT_PATH = "ai-system.md";
 var FALLBACK_PATHS = ["ai-act.yml", "ai-act.yaml"];
 var MAX_BYTES = 64 * 1024;
-function locateDescription(pathInput, cwd) {
+function locateDescription(pathInput, root) {
   const requested = pathInput || DEFAULT_PATH;
   const candidates = requested === DEFAULT_PATH ? [DEFAULT_PATH, ...FALLBACK_PATHS] : [requested];
   for (const c of candidates) {
-    const abs = resolve(cwd, c);
-    if (existsSync(abs) && statSync(abs).isFile()) return { rel: c, abs };
+    const abs = locateForRead(root, c, "path");
+    if (abs) return { rel: c, abs };
   }
-  const tried = candidates.map((c) => `"${c}"`).join(", ");
-  throw new Error(
+  const tried = candidates.map((c) => `"${displayText(c)}"`).join(", ");
+  throw new SafeError(
     `No AI system description found (looked for ${tried}). Add an ai-system.md file, or an ai-act.yml with a "description:" field, or set the "path" input.`
   );
 }
 function readDescription(abs, rel) {
-  const size = statSync(abs).size;
-  if (size > MAX_BYTES) throw new Error(`${rel} is ${size} bytes; the limit is ${MAX_BYTES} bytes (64 KiB).`);
-  const raw = readFileSync(abs, "utf8");
+  const shown = displayText(rel);
+  const raw = readRegularFile(abs, MAX_BYTES, rel).toString("utf8");
   let text;
   if (/\.ya?ml$/i.test(rel)) {
-    let doc;
+    const doc = (0, import_yaml.parseDocument)(raw, { prettyErrors: false, logLevel: "silent" });
+    if (doc.errors.length) {
+      const pos = doc.errors[0].linePos && doc.errors[0].linePos[0];
+      const where = pos && Number.isInteger(pos.line) ? ` (first error on line ${pos.line})` : "";
+      throw new SafeError(`${shown} is not valid YAML${where}.`);
+    }
+    let value;
     try {
-      doc = (0, import_yaml.parse)(raw);
-    } catch (e) {
-      throw new Error(`${rel} is not valid YAML: ${e.message.split("\n")[0]}`);
+      value = doc.toJS({ maxAliasCount: 100 });
+    } catch {
+      throw new SafeError(`${shown} could not be read as YAML (too many aliases or an unsupported construct).`);
     }
-    if (!doc || typeof doc !== "object" || typeof doc.description !== "string") {
-      throw new Error(`${rel} needs a top-level "description:" field with text.`);
+    if (!value || typeof value !== "object" || typeof value.description !== "string") {
+      throw new SafeError(`${shown} needs a top-level "description:" field with text.`);
     }
-    text = doc.description;
+    text = value.description;
   } else {
     text = raw.replace(/<!--[\s\S]*?-->/g, "");
   }
   text = text.trim();
-  if (!text) throw new Error(`${rel} has no description text.`);
+  if (!text) throw new SafeError(`${shown} has no description text.`);
   return text;
 }
 
 // node_modules/@lucairn/ai-act-classifier/dist/extract/keyword.js
 init_normalize();
 init_lang();
-import { readFileSync as readFileSync2 } from "node:fs";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname as dirname2, join as join2 } from "node:path";
 
 // node_modules/@lucairn/ai-act-classifier/dist/extract/negation.js
 init_normalize();
@@ -7740,10 +7918,10 @@ function tokenizeWithBreaks(text, c) {
     const toks = tokenize(normalize(piece));
     toks.forEach((tok, k) => {
       tokens.push(tok);
-      const sep = k === 0 ? pendingSep : "";
-      breakBefore.push(sep.length > 0);
-      commaOnly.push(sep.length > 0 && /^[,\s]+$/.test(sep));
-      hardBefore.push(/[.!?;:\n\r]/.test(sep));
+      const sep2 = k === 0 ? pendingSep : "";
+      breakBefore.push(sep2.length > 0);
+      commaOnly.push(sep2.length > 0 && /^[,\s]+$/.test(sep2));
+      hardBefore.push(/[.!?;:\n\r]/.test(sep2));
     });
     if (toks.length > 0)
       pendingSep = "";
@@ -8091,11 +8269,11 @@ function discoverGroups(lexicon) {
   return Object.keys(lexicon).filter((k) => !RESERVED_KEYS.has(k) && !k.startsWith("_"));
 }
 var __filename = fileURLToPath(new URL("./engine/dist/extract/keyword.js", import.meta.url).href);
-var __dirname = dirname(__filename);
-var DATA_DIR = join(__dirname, "..", "data");
+var __dirname = dirname2(__filename);
+var DATA_DIR = join2(__dirname, "..", "data");
 function loadLexicon(lang) {
-  const path = join(DATA_DIR, `patterns.${lang}.json`);
-  const raw = readFileSync2(path, "utf8");
+  const path = join2(DATA_DIR, `patterns.${lang}.json`);
+  const raw = readFileSync(path, "utf8");
   const parsed = JSON.parse(raw);
   if (parsed.language !== lang) {
     throw new Error(`loadLexicon(): patterns.${lang}.json claims language="${parsed.language}", expected "${lang}".`);
@@ -8214,7 +8392,7 @@ function extractFeatures(text, opts = {}) {
 // node_modules/@lucairn/ai-act-classifier/dist/extract/cache.js
 import { createHash } from "node:crypto";
 import { homedir } from "node:os";
-import { join as join2 } from "node:path";
+import { join as join3 } from "node:path";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 function cacheKey(params) {
@@ -8232,14 +8410,14 @@ function cacheKey(params) {
 }
 function resolveCacheLlmDir(opts = {}) {
   if (typeof opts.cacheDir === "string" && opts.cacheDir.length > 0) {
-    return join2(opts.cacheDir, "llm");
+    return join3(opts.cacheDir, "llm");
   }
   const xdg = process.env["XDG_CACHE_HOME"];
-  const root = typeof xdg === "string" && xdg.length > 0 ? xdg : join2(homedir(), ".cache");
-  return join2(root, "lucairn-ai-act-classifier", "llm");
+  const root = typeof xdg === "string" && xdg.length > 0 ? xdg : join3(homedir(), ".cache");
+  return join3(root, "lucairn-ai-act-classifier", "llm");
 }
 function entryPathFor(key, opts) {
-  return join2(resolveCacheLlmDir(opts), `${key}.json`);
+  return join3(resolveCacheLlmDir(opts), `${key}.json`);
 }
 async function cacheRead(key, opts = {}) {
   const path = entryPathFor(key, opts);
@@ -8260,8 +8438,8 @@ async function cacheRead(key, opts = {}) {
 async function cacheWrite(key, value, opts = {}) {
   const dir = resolveCacheLlmDir(opts);
   await mkdir(dir, { recursive: true, mode: 448 });
-  const finalPath = join2(dir, `${key}.json`);
-  const tmpPath = join2(dir, `${key}.${randomBytes(6).toString("hex")}.tmp`);
+  const finalPath = join3(dir, `${key}.json`);
+  const tmpPath = join3(dir, `${key}.${randomBytes(6).toString("hex")}.tmp`);
   const body = JSON.stringify(value);
   await writeFile(tmpPath, body, { mode: 384, encoding: "utf8" });
   await rename(tmpPath, finalPath);
@@ -8532,15 +8710,15 @@ function classifyArticle5(features) {
 }
 
 // node_modules/@lucairn/ai-act-classifier/dist/rules/article-6-annex-iii.js
-import { readFileSync as readFileSync3 } from "node:fs";
+import { readFileSync as readFileSync2 } from "node:fs";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
-import { dirname as dirname2, join as join3 } from "node:path";
+import { dirname as dirname3, join as join4 } from "node:path";
 var __filename2 = fileURLToPath2(new URL("./engine/dist/rules/article-6-annex-iii.js", import.meta.url).href);
-var __dirname2 = dirname2(__filename2);
-var DATA_DIR2 = join3(__dirname2, "..", "data");
+var __dirname2 = dirname3(__filename2);
+var DATA_DIR2 = join4(__dirname2, "..", "data");
 function loadAnnexIII() {
-  const path = join3(DATA_DIR2, "annex-iii.json");
-  const raw = readFileSync3(path, "utf8");
+  const path = join4(DATA_DIR2, "annex-iii.json");
+  const raw = readFileSync2(path, "utf8");
   return JSON.parse(raw);
 }
 var ANNEX_III = loadAnnexIII();
@@ -9335,17 +9513,17 @@ function classifyGPAI(features) {
 }
 
 // node_modules/@lucairn/ai-act-classifier/dist/rules/three-category.js
-import { readFileSync as readFileSync4 } from "node:fs";
+import { readFileSync as readFileSync3 } from "node:fs";
 import { fileURLToPath as fileURLToPath3 } from "node:url";
-import { dirname as dirname3, join as join4 } from "node:path";
+import { dirname as dirname4, join as join5 } from "node:path";
 var __filename3 = fileURLToPath3(new URL("./engine/dist/rules/three-category.js", import.meta.url).href);
-var __dirname3 = dirname3(__filename3);
-var DATA_DIR3 = join4(__dirname3, "..", "data");
+var __dirname3 = dirname4(__filename3);
+var DATA_DIR3 = join5(__dirname3, "..", "data");
 var GEN_FILE_LABEL = "src/data/three-category.gen.json";
 var SOURCE_FILE_LABEL = "lucairn-website/compliance/checklist-content.ts";
 function loadGenJson() {
-  const path = join4(DATA_DIR3, "three-category.gen.json");
-  const raw = readFileSync4(path, "utf8");
+  const path = join5(DATA_DIR3, "three-category.gen.json");
+  const raw = readFileSync3(path, "utf8");
   return JSON.parse(raw);
 }
 var GEN = loadGenJson();
@@ -9430,13 +9608,13 @@ function classifyThreeCategory(annex, article5, article10, article12, article14,
 }
 
 // node_modules/@lucairn/ai-act-classifier/dist/util/rules-hash.js
-import { readFileSync as readFileSync5 } from "node:fs";
+import { readFileSync as readFileSync4 } from "node:fs";
 import { createHash as createHash2 } from "node:crypto";
 import { fileURLToPath as fileURLToPath4 } from "node:url";
-import { dirname as dirname4, join as join5 } from "node:path";
+import { dirname as dirname5, join as join6 } from "node:path";
 var __filename4 = fileURLToPath4(new URL("./engine/dist/util/rules-hash.js", import.meta.url).href);
-var __dirname4 = dirname4(__filename4);
-var DATA_DIR4 = join5(__dirname4, "..", "data");
+var __dirname4 = dirname5(__filename4);
+var DATA_DIR4 = join6(__dirname4, "..", "data");
 var RULES_HASH_FILES = [
   "annex-iii.json",
   "patterns.de.json",
@@ -9447,7 +9625,7 @@ function computeRulesHash() {
   const hasher = createHash2("sha256");
   const sorted = [...RULES_HASH_FILES].sort();
   for (const filename of sorted) {
-    const bytes = readFileSync5(join5(DATA_DIR4, filename));
+    const bytes = readFileSync4(join6(DATA_DIR4, filename));
     hasher.update(filename);
     hasher.update("\0");
     hasher.update(bytes);
@@ -9457,8 +9635,8 @@ function computeRulesHash() {
   return { full, short: full.slice(0, 8) };
 }
 function loadRulesVersion() {
-  const pkgPath = join5(__dirname4, "..", "..", "package.json");
-  const pkg = JSON.parse(readFileSync5(pkgPath, "utf8"));
+  const pkgPath = join6(__dirname4, "..", "..", "package.json");
+  const pkg = JSON.parse(readFileSync4(pkgPath, "utf8"));
   return `v${pkg.version}`;
 }
 var { full: RULES_HASH_FULL, short: RULES_HASH_SHORT } = computeRulesHash();
@@ -9574,32 +9752,32 @@ async function classify(text, opts = {}) {
 
 // node_modules/@lucairn/ai-act-classifier/dist/format/explain.js
 import { fileURLToPath as fileURLToPath7 } from "node:url";
-import { dirname as dirname7, join as join8 } from "node:path";
+import { dirname as dirname8, join as join9 } from "node:path";
 
 // node_modules/@lucairn/ai-act-classifier/dist/util/citations.js
-import { readFileSync as readFileSync6 } from "node:fs";
+import { readFileSync as readFileSync5 } from "node:fs";
 import { fileURLToPath as fileURLToPath5 } from "node:url";
-import { dirname as dirname5, join as join6 } from "node:path";
+import { dirname as dirname6, join as join7 } from "node:path";
 var __filename5 = fileURLToPath5(new URL("./engine/dist/util/citations.js", import.meta.url).href);
-var __dirname5 = dirname5(__filename5);
-var DATA_DIR5 = join6(__dirname5, "..", "data");
+var __dirname5 = dirname6(__filename5);
+var DATA_DIR5 = join7(__dirname5, "..", "data");
 function loadCitations() {
-  const path = join6(DATA_DIR5, "citations.json");
-  const raw = readFileSync6(path, "utf8");
+  const path = join7(DATA_DIR5, "citations.json");
+  const raw = readFileSync5(path, "utf8");
   return JSON.parse(raw);
 }
 var CITATIONS = loadCitations();
 
 // node_modules/@lucairn/ai-act-classifier/dist/i18n/load.js
-import { readFileSync as readFileSync7 } from "node:fs";
+import { readFileSync as readFileSync6 } from "node:fs";
 import { fileURLToPath as fileURLToPath6 } from "node:url";
-import { dirname as dirname6, join as join7 } from "node:path";
+import { dirname as dirname7, join as join8 } from "node:path";
 var __filename6 = fileURLToPath6(new URL("./engine/dist/i18n/load.js", import.meta.url).href);
-var __dirname6 = dirname6(__filename6);
+var __dirname6 = dirname7(__filename6);
 var I18N_DIR = __dirname6;
 function loadLocale(lang) {
-  const path = join7(I18N_DIR, `${lang}.json`);
-  const raw = readFileSync7(path, "utf8");
+  const path = join8(I18N_DIR, `${lang}.json`);
+  const raw = readFileSync6(path, "utf8");
   const parsed = JSON.parse(raw);
   if (parsed.language !== lang) {
     throw new Error(`i18n/load: ${lang}.json claims language="${parsed.language}", expected "${lang}".`);
@@ -9613,8 +9791,8 @@ var LOCALES = {
 
 // node_modules/@lucairn/ai-act-classifier/dist/format/explain.js
 var __filename7 = fileURLToPath7(new URL("./engine/dist/format/explain.js", import.meta.url).href);
-var __dirname7 = dirname7(__filename7);
-var EXCERPT_DIR = join8(__dirname7, "..", "content", "blog-excerpts");
+var __dirname7 = dirname8(__filename7);
+var EXCERPT_DIR = join9(__dirname7, "..", "content", "blog-excerpts");
 
 // node_modules/@lucairn/ai-act-classifier/dist/data/citations.json
 var citations_default = {
@@ -9784,15 +9962,15 @@ var CLASS_TEXT = {
   en: {
     prohibited: { badge: "possible prohibited practice", title: "Article 5 trigger matched (possible prohibited practice)" },
     "high-risk": { badge: "possible high-risk", title: "Annex III area matched (possible high-risk, Article 6)" },
-    transparency: { badge: "transparency", title: "Transparency obligation (Article 50)" },
-    gpai: { badge: "GPAI", title: "General-purpose AI model obligations (Articles 53 / 55)" },
+    transparency: { badge: "possible transparency obligation", title: "Possible transparency obligation (Article 50)" },
+    gpai: { badge: "GPAI", title: "Possible general-purpose AI model provider obligations (Article 53; Article 55 if systemic risk)" },
     "no-trigger": { badge: "no trigger found", title: "No trigger found" }
   },
   de: {
     prohibited: { badge: "m\xF6gliche verbotene Praktik", title: "Artikel-5-Ausl\xF6ser erkannt (m\xF6gliche verbotene Praktik)" },
     "high-risk": { badge: "m\xF6glicherweise Hochrisiko", title: "Anhang-III-Bereich erkannt (m\xF6glicherweise Hochrisiko, Artikel 6)" },
-    transparency: { badge: "Transparenz", title: "Transparenzpflicht (Artikel 50)" },
-    gpai: { badge: "GPAI", title: "Pflichten f\xFCr KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53 / 55)" },
+    transparency: { badge: "m\xF6gliche Transparenzpflicht", title: "M\xF6gliche Transparenzpflicht (Artikel 50)" },
+    gpai: { badge: "GPAI", title: "M\xF6gliche Anbieterpflichten f\xFCr KI-Modelle mit allgemeinem Verwendungszweck (Artikel 53; Artikel 55 bei systemischem Risiko)" },
     "no-trigger": { badge: "kein Ausl\xF6ser gefunden", title: "Kein Ausl\xF6ser gefunden" }
   }
 };
@@ -9827,26 +10005,31 @@ var ART5_LETTER = {
 };
 var ART50_PATH = {
   paragraph_1_interaction: {
+    paragraph: 1,
     ref: { en: "Art. 50(1)", de: "Art. 50 Abs. 1" },
     en: "AI system interacting directly with natural persons",
     de: "KI-System, das direkt mit nat\xFCrlichen Personen interagiert"
   },
   paragraph_2_synthetic_content: {
+    paragraph: 2,
     ref: { en: "Art. 50(2)", de: "Art. 50 Abs. 2" },
     en: "synthetic audio, image, video or text content",
     de: "synthetische Audio-, Bild-, Video- oder Textinhalte"
   },
   paragraph_3_emotion_or_biometric_categorisation: {
+    paragraph: 3,
     ref: { en: "Art. 50(3)", de: "Art. 50 Abs. 3" },
     en: "emotion recognition or biometric categorisation system",
     de: "Emotionserkennungssystem oder System zur biometrischen Kategorisierung"
   },
   paragraph_4_deepfake: {
+    paragraph: 4,
     ref: { en: "Art. 50(4)", de: "Art. 50 Abs. 4" },
     en: "deep fake",
     de: "Deepfake"
   },
   paragraph_4_public_interest_text: {
+    paragraph: 4,
     ref: { en: "Art. 50(4)", de: "Art. 50 Abs. 4" },
     en: "text published to inform the public on matters of public interest",
     de: "Text, der ver\xF6ffentlicht wird, um die \xD6ffentlichkeit \xFCber Angelegenheiten von \xF6ffentlichem Interesse zu informieren"
@@ -9869,7 +10052,9 @@ var UI = {
     disclaimer: "Informational tool \u2014 not legal advice. Use as a starting point; verify with your DPO and qualified counsel before acting on any classification.",
     engineNote: "Deterministic keyword rules engine: it matches your wording against a curated lexicon. A description that avoids the lexicon's vocabulary can miss a trigger, and negated or unusual wording can be misread. The 98.8% on 71 test cases measures consistency with the curated lexicon, not real-world accuracy.",
     notFinal: "A keyword match is not a final classification: Article 6(3) and Article 5 exceptions are not assessed.",
-    localNote: "The engine ran inside this job. No text was sent anywhere.",
+    localNote: "The classification itself makes no network requests and reads no tokens. Its results, the file path and the matched phrases appear in the job summary and logs, which GitHub stores as usual.",
+    negNote: "Found, but the text appears to deny it \u2014 please check",
+    negCue: "negation",
     links: "EUR-Lex links open the full Regulation (EU) 2024/1689; the article is named next to each link.",
     share: "Share this result",
     shareText: "run the same check in the browser on lucairn.eu",
@@ -9892,7 +10077,9 @@ var UI = {
     disclaimer: "Informationswerkzeug \u2014 keine Rechtsberatung. Als Ausgangspunkt verwenden; vor jeder compliance-relevanten Entscheidung mit Ihrer DSB und qualifizierter juristischer Beratung verifizieren.",
     engineNote: "Deterministische Schl\xFCsselwort-Regel-Engine: Sie gleicht Ihre Formulierung mit einem kuratierten Lexikon ab. Eine Beschreibung, die das Vokabular des Lexikons vermeidet, kann einen Ausl\xF6ser verfehlen, und verneinte oder ungew\xF6hnliche Formulierungen k\xF6nnen falsch gelesen werden. Die 98,8 % auf 71 Testf\xE4llen messen die Konsistenz mit dem kuratierten Lexikon, nicht die Genauigkeit in der realen Welt.",
     notFinal: "Ein Stichwort-Treffer ist keine abschlie\xDFende Einstufung: Ausnahmen nach Artikel 6 Absatz 3 und Artikel 5 werden nicht gepr\xFCft.",
-    localNote: "Die Engine lief in diesem Job. Es wurde kein Text versendet.",
+    localNote: "Die Einordnung selbst stellt keine Netzwerkanfragen und liest keine Tokens. Ergebnis, Dateipfad und gefundene Phrasen erscheinen in der Job-Zusammenfassung und im Log, die GitHub wie \xFCblich speichert.",
+    negNote: "Gefunden, aber der Text scheint es zu verneinen \u2014 bitte pr\xFCfen",
+    negCue: "Verneinung",
     links: "EUR-Lex-Links \xF6ffnen die gesamte Verordnung (EU) 2024/1689; der Artikel steht jeweils daneben.",
     share: "Ergebnis teilen",
     shareText: "dieselbe Pr\xFCfung im Browser auf lucairn.eu ausf\xFChren",
@@ -9923,6 +10110,7 @@ function findings(r, citations, lang) {
   for (const h of r.article_5.hits) {
     rows.push({
       group: "article_5",
+      key: `a5:${h.letter}`,
       ref: lang === "de" ? `Art. 5 Abs. 1 Buchst. ${h.letter}` : `Art. 5(1)(${h.letter})`,
       what: ART5_LETTER[lang][h.letter] ?? h.category_key,
       phrases: h.matched_phrases,
@@ -9933,6 +10121,7 @@ function findings(r, citations, lang) {
     for (const d of r.annex_iii.domains) {
       rows.push({
         group: "annex_iii",
+        key: `a3:${d.annex_iii_number}`,
         ref: annexRef(d, lang),
         what: lang === "de" ? d.title_de : d.title_en,
         phrases: d.matched_phrases,
@@ -9944,6 +10133,7 @@ function findings(r, citations, lang) {
     if (!on || !ART50_PATH[key]) continue;
     rows.push({
       group: "article_50",
+      key: `a50:${ART50_PATH[key].paragraph}`,
       ref: ART50_PATH[key].ref[lang],
       what: ART50_PATH[key][lang],
       phrases: [],
@@ -9953,6 +10143,7 @@ function findings(r, citations, lang) {
   if (r.gpai.article_53_applicable) {
     rows.push({
       group: "gpai",
+      key: "a53",
       ref: "Art. 53",
       what: lang === "de" ? "Pflichten f\xFCr Anbieter von KI-Modellen mit allgemeinem Verwendungszweck" : "obligations for providers of general-purpose AI models",
       phrases: [],
@@ -9962,6 +10153,7 @@ function findings(r, citations, lang) {
   if (r.gpai.article_55_applicable) {
     rows.push({
       group: "gpai",
+      key: "a55",
       ref: "Art. 55",
       what: lang === "de" ? "KI-Modelle mit allgemeinem Verwendungszweck mit systemischem Risiko" : "general-purpose AI models with systemic risk",
       phrases: [],
@@ -9989,6 +10181,16 @@ function obligations(r, citations, lang) {
   }
   return rows;
 }
+var BADGE_LABELS = /* @__PURE__ */ new Set(["EU AI Act", "EU-KI-VO"]);
+function isPreviousBadge(buf) {
+  let b;
+  try {
+    b = JSON.parse(Buffer.from(buf).toString("utf8"));
+  } catch {
+    return false;
+  }
+  return !!b && typeof b === "object" && !Array.isArray(b) && b.schemaVersion === 1 && BADGE_LABELS.has(b.label) && typeof b.message === "string" && typeof b.color === "string" && Object.keys(b).every((k) => ["schemaVersion", "label", "message", "color"].includes(k));
+}
 function badge(cls, lang) {
   return {
     schemaVersion: 1,
@@ -9997,23 +10199,88 @@ function badge(cls, lang) {
     color: CLASS_COLOR[cls]
   };
 }
-var cell = (s) => String(s).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+var CONTROL2 = /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g;
+function codeSpan(value, { table = false } = {}) {
+  let v = String(value).replace(/\r\n|\r|\n/g, " ").replace(CONTROL2, "\uFFFD");
+  if (table) {
+    v = v.replace(/\|/g, "\\|");
+  }
+  if (v === "") v = " ";
+  const longest = Math.max(0, ...(v.match(/`+/g) || []).map((run) => run.length));
+  const fence = "`".repeat(longest + 1);
+  const pad = /^[` ]|[` ]$/.test(v) ? " " : "";
+  return `${fence}${pad}${v}${pad}${fence}`;
+}
+function mdText(value) {
+  return String(value).replace(/\r\n|\r|\n/g, " ").replace(CONTROL2, "\uFFFD").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/[\\`*_[\]|~]/g, (c) => `\\${c}`);
+}
+var ART50_PARAGRAPH2 = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 4 };
+function negatedKey(h) {
+  const lead = String(h.category || "").split("_")[0];
+  switch (h.group) {
+    case "article_5_prohibited":
+      return /^[a-h]$/.test(lead) ? `a5:${lead}` : "a5";
+    case "annex_iii":
+      return /^[1-8]$/.test(lead) ? `a3:${lead}` : "a3";
+    case "article_50_gpai":
+      return ART50_PARAGRAPH2[lead] ? `a50:${ART50_PARAGRAPH2[lead]}` : "a50";
+    case "gpai_models":
+      return h.category === "systemic_risk_markers" ? "a55" : "a53";
+    default:
+      return `other:${h.group}`;
+  }
+}
+function negatedRef(h, lang) {
+  const de = lang === "de";
+  const lead = String(h.category || "").split("_")[0];
+  switch (h.group) {
+    case "article_5_prohibited":
+      return /^[a-h]$/.test(lead) ? de ? `Art. 5 Abs. 1 Buchst. ${lead}` : `Art. 5(1)(${lead})` : "Art. 5";
+    case "annex_iii":
+      return /^[1-8]$/.test(lead) ? de ? `Anhang III Nr. ${lead}` : `Annex III point ${lead}` : de ? "Anhang III" : "Annex III";
+    case "article_50_gpai":
+      return ART50_PARAGRAPH2[lead] ? de ? `Art. 50 Abs. ${ART50_PARAGRAPH2[lead]}` : `Art. 50(${ART50_PARAGRAPH2[lead]})` : "Art. 50";
+    case "article_4_ai_literacy":
+      return "Art. 4";
+    case "gpai_models":
+      return h.category === "systemic_risk_markers" ? "Art. 55" : "Art. 53";
+    case "scope_qualifiers":
+      return de ? "Anwendungsbereich" : "scope qualifier";
+    default:
+      return de ? "sonstige" : "other";
+  }
+}
+function negationLine(h, t, table) {
+  return `${t.negNote}: ${codeSpan(h.phrase, { table })} (${t.negCue}: ${codeSpan(h.cue, { table })})`;
+}
+var cell = (s) => mdText(s);
 function summaryMarkdown({ r, cls, citations, lang, sourcePath, engine }) {
   const t = UI[lang];
   const c = CLASS_TEXT[lang][cls];
   const rows = findings(r, citations, lang);
   const L = [];
   L.push(`## ${t.heading}: ${c.title}`, "");
-  L.push(`**${t.result}:** \`${c.badge}\` \xB7 **${t.source}:** \`${cell(sourcePath)}\` \xB7 **${t.language}:** ${r.detected_lang}`, "");
+  L.push(`**${t.result}:** ${codeSpan(c.badge)} \xB7 **${t.source}:** ${codeSpan(sourcePath)} \xB7 **${t.language}:** ${mdText(r.detected_lang)}`, "");
+  const pending = [...r.negated_hits || []];
+  const takeNotes = (key) => {
+    const mine = pending.filter((h) => negatedKey(h) === key);
+    for (const h of mine) pending.splice(pending.indexOf(h), 1);
+    return mine;
+  };
   if (rows.length) {
     L.push(`### ${t.fired}`, "", `| ${t.colRef} | ${t.colWhat} | ${t.colPhrases} | ${t.colSource} |`, "|---|---|---|---|");
     for (const f of rows) {
-      const phrases = f.phrases.length ? f.phrases.map((p) => `"${cell(p)}"`).join(", ") : "\u2014";
+      const phrases = f.phrases.length ? f.phrases.map((p) => codeSpan(p, { table: true })).join(", ") : "\u2014";
       L.push(`| ${f.ref} | ${cell(f.what)} | ${phrases} | [EUR-Lex](${f.url}) |`);
+      for (const h of takeNotes(f.key)) L.push(`| \u21B3 | ${negationLine(h, t, true)} | | |`);
     }
     L.push("");
   } else {
     L.push(`> ${t.noTrigger}`, "");
+  }
+  if (pending.length) {
+    for (const h of pending) L.push(`- ${cell(negatedRef(h, lang))}: ${negationLine(h, t, false)}`);
+    L.push("");
   }
   if (cls === "high-risk") {
     const obl = obligations(r, citations, lang);
@@ -10043,27 +10310,31 @@ function input(name, fallback) {
 function setOutput(name, value) {
   const file = process.env.GITHUB_OUTPUT;
   if (!file) return;
-  const delim = `ghadelim_${randomUUID()}`;
+  const delim = `ghadelim_${randomUUID2()}`;
+  const v = String(value);
+  if (v.includes(delim) || /[\r\n]/.test(v)) throw new SafeError(`Output "${name}" contains a line break; refusing to write it.`);
   appendFileSync(file, `${name}<<${delim}
-${value}
+${v}
 ${delim}
 `);
 }
 function choice(name, value, allowed) {
-  if (!allowed.includes(value)) throw new Error(`Input "${name}" must be one of ${allowed.join(", ")}; got "${value}".`);
+  if (!allowed.includes(value)) throw new SafeError(`Input "${name}" must be one of ${allowed.join(", ")}; got "${displayText(value)}".`);
   return value;
 }
 async function main() {
   const cwd = process.env.GITHUB_WORKSPACE || process.cwd();
+  const root = workspaceRoot(cwd);
   const lang = choice("lang", input("lang", "en").toLowerCase(), ["en", "de"]);
   const failOn = choice("fail-on", input("fail-on", "none").toLowerCase(), ["none", "prohibited", "high-risk"]);
   const badgeRaw = process.env["INPUT_BADGE-PATH"];
   const badgePath = badgeRaw === void 0 ? ".github/ai-act-badge.json" : badgeRaw.trim();
-  const { rel, abs } = locateDescription(input("path", "ai-system.md"), cwd);
+  const { rel, abs } = locateDescription(input("path", "ai-system.md"), root);
   const text = readDescription(abs, rel);
+  const shownRel = displayText(rel);
   const detected = await detectLanguage(text);
   if (detected !== lang) {
-    console.log(`::warning::${rel} looks like "${detected}" text but lang is "${lang}". The engine matches against the ${lang} lexicon only; set lang: ${detected} if the description is in that language.`);
+    warning(`${shownRel} looks like "${detected}" text but lang is "${lang}". The engine matches against the ${lang} lexicon only; set lang: ${detected} if the description is in that language.`);
   }
   const r = await runEngine(text, lang);
   const cls = riskClass(r);
@@ -10073,24 +10344,24 @@ async function main() {
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + "\n");
   let badgeAbs = "";
   if (badgePath) {
+    writeContained(root, badgePath, "badge-path", JSON.stringify(badge(cls, lang), null, 2) + "\n", { mayOverwrite: isPreviousBadge });
     badgeAbs = resolve2(cwd, badgePath);
-    mkdirSync(dirname8(badgeAbs), { recursive: true });
-    writeFileSync(badgeAbs, JSON.stringify(badge(cls, lang), null, 2) + "\n");
   }
   setOutput("risk-class", cls);
   setOutput("triggered", JSON.stringify(trig));
   setOutput("badge-path", badgeAbs);
   setOutput("engine-version", ENGINE_VERSION);
-  console.log(`EU AI Act check: ${cls} (${CLASS_TEXT[lang][cls].badge}) from ${rel}; engine ${ENGINE_NAME} v${ENGINE_VERSION}`);
-  console.log(`triggered: ${JSON.stringify(trig)}`);
-  if (badgeAbs) console.log(`badge JSON: ${badgeAbs}`);
+  info(`EU AI Act check: ${cls} (${CLASS_TEXT[lang][cls].badge}) from ${shownRel}; engine ${ENGINE_NAME} v${ENGINE_VERSION}`);
+  info(`triggered: ${JSON.stringify(trig)}`);
+  if (badgeAbs) info(`badge JSON: ${displayText(badgeAbs)}`);
   const fail5 = failOn === "prohibited" && cls === "prohibited" || failOn === "high-risk" && (cls === "prohibited" || cls === "high-risk");
   if (fail5) {
-    console.log(`::error::EU AI Act check found "${cls}" and fail-on is "${failOn}".`);
+    error(`EU AI Act check found "${cls}" and fail-on is "${failOn}".`);
     process.exitCode = 1;
   }
 }
 main().catch((e) => {
-  console.log(`::error::${e && e.message ? e.message : String(e)}`);
+  const msg = e && e.message ? e.message : String(e);
+  error(e instanceof SafeError ? msg : displayText(msg));
   process.exitCode = 1;
 });
